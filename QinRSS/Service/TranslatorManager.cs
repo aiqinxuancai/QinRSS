@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using QinRSS.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -123,6 +124,8 @@ namespace QinRSS.Service
             var r = await url.WithHeaders(headers).PostStringAsync(sendString);
 
             var rj = await r.GetStringAsync();
+
+            Debug.WriteLine(rj);
             CaiyunResult j = JsonConvert.DeserializeObject<CaiyunResult>(rj);
 
             return j;
@@ -143,10 +146,9 @@ namespace QinRSS.Service
                 var ret = await Translater(s, j.Item1, j.Item2);
 
 
-                foreach (var item in ret.Target)
-                {
-                    list.Add(CaiyunDecode(item));
-                }
+                list.Add(CaiyunDecode(ret.Target));
+       
+
             }
             catch(Exception ex) 
             {
@@ -166,7 +168,7 @@ namespace QinRSS.Service
         public string[] SrcTgt { get; set; }
         
         [JsonProperty("target")]
-        public string[] Target { get; set; }
+        public string Target { get; set; }
 
         [JsonProperty("rc")]
         public double Rc { get; set; }

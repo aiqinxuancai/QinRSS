@@ -29,12 +29,7 @@ namespace AngelaAI.QQChannel.Service
 
         public List<OneBotRSSModel> SubscriptionModel => _subscriptionModel;
 
-
         private List<OneBotRSSModel> _subscriptionModel { get; set; } = new List<OneBotRSSModel>();
-
-
-        public event SendSubscriptionHandler OnNeedSendSubscription;
-
 
         private object _lock = new object();
 
@@ -196,11 +191,16 @@ namespace AngelaAI.QQChannel.Service
                                 else
                                 {
                                     subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
-                                    SendSubscription(model.SelfId, subscription.GuildId, subscription.GroupOrChannelId, dateTime, $"{subscription.Name}更新了！\n{iStr}", itemUrl, imageUrls).Wait();
-                                    //if (OnNeedSendSubscription != null)
-                                    //{
-                                    //    OnNeedSendSubscription(model.SelfId, subscription.GuildId, subscription.GroupOrChannelId, dateTime, $"{subscription.Name}更新了！\n{iStr}", itemUrl, imageUrls); 
-                                    //}
+
+                                    //发送订阅
+                                    SendSubscription(model.SelfId, 
+                                        subscription.GuildId, 
+                                        subscription.GroupOrChannelId, 
+                                        dateTime, 
+                                        $"{subscription.Name}更新了！\n{iStr}", 
+                                        itemUrl, 
+                                        imageUrls,
+                                        subscription.Translate).Wait();
                                 }
 
                             }
@@ -228,7 +228,7 @@ namespace AngelaAI.QQChannel.Service
         /// <param name="url"></param>
         /// <param name="imageUrls"></param>
         /// <returns></returns>
-        private async Task SendSubscription(string selfId, string guildId, string channelId, DateTime time, string content, string url, List<string> imageUrls)
+        private async Task SendSubscription(string selfId, string guildId, string channelId, DateTime time, string content, string url, List<string> imageUrls, bool translate)
         {
             SimpleLogger.Instance.Info($"开始发送订阅{channelId}");
             SimpleLogger.Instance.Info($"{time} {url}");
@@ -236,7 +236,29 @@ namespace AngelaAI.QQChannel.Service
 
             var urlBase64 = Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(url));
 
-            string sendText = $"{content}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+            string sendText = "";
+
+            if (translate)
+            {
+                var translates = await TranslatorManager.Translater(content.Replace("※", ""));
+                if (translates != null)
+                {
+                    var translateContent = "";
+                    foreach (var item in translates)
+                    {
+                        translateContent += $"\n{item}";
+                    }
+                    sendText += $"{content}\n{translateContent}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+                }
+                else
+                {
+                    sendText = $"{content}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+                }
+            }
+            else
+            {
+                sendText = $"{content}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+            }
 
             //图片CQ码
             foreach (var imageUrl in imageUrls)
@@ -255,7 +277,7 @@ namespace AngelaAI.QQChannel.Service
             else
             {
                 //频道
-                await WebSocketManager.Instance.SendGroupMessage(selfId, channelId, sendText);
+                await WebSocketManager.Instance.SendChannelMessage(selfId, guildId, channelId, sendText);
             }
         }
 
@@ -308,7 +330,7 @@ namespace AngelaAI.QQChannel.Service
 
         //存储订阅，读取加载订阅
 
-        public bool Add(string selfId, string guildId, string channelId, string name, string url)
+        public bool Add(string selfId, string guildId, string channelId, string name, string url, bool translate)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -344,6 +366,8 @@ namespace AngelaAI.QQChannel.Service
             model.Url = url;
             model.GroupOrChannelId = channelId;
             model.GuildId = guildId;
+            model.Translate = translate;
+
             SimpleLogger.Instance.Error($"添加订阅：{model.Url}");
 
             list.Add(model);

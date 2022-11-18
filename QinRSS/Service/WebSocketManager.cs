@@ -191,75 +191,7 @@ namespace QinRSS.Service
                 return; //不是群主不处理
             }
 
-            switch (cmd.FirstOrDefault())
-            {
-                case "#add":
-                    {
-                        if (cmd.Length == 3)
-                        {
-                            try {
-                                if (SubscriptionManager.Instance.Add(selfId, "", groupId, cmd[1], cmd[2]))
-                                {
-                                    await SendGroupMessage(webSocketConnection, message.GroupId, $"已添加订阅{cmd[1]}");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                await SendGroupMessage(webSocketConnection, message.GroupId, ex.Message);
-                            }
-                        }
-                        break;
-                    }
-                case "#remove":
-                    {
-                        if (cmd.Length == 2)
-                        {
-                            SubscriptionManager.Instance.Remove(selfId, "", groupId, cmd[1]);
-                            await SendGroupMessage(webSocketConnection, message.GroupId, $"已移除订阅{cmd[1]}");
-                        }
-                        break;
-                    }
-                case "#clear":
-                    {
-                        if (cmd.Length == 1)
-                        {
-                            SubscriptionManager.Instance.Clear(selfId, "", groupId);
-                            await SendGroupMessage(webSocketConnection, message.GroupId, $"已清空订阅{cmd[1]}");
-                        }
-                        break;
-                    }
-                case "#list":
-                    {
-                        if (cmd.Length >= 1)
-                        {
-                            var list = SubscriptionManager.Instance.List(selfId, "", groupId);
-                            if (!string.IsNullOrEmpty(list))
-                            {
-                                await SendChannelMessage(webSocketConnection, "", groupId, list);
-                            }
-                            else
-                            {
-                                await SendChannelMessage(webSocketConnection, "", groupId, "列表为空");
-                            }
-
-                        }
-                        break;
-                    }
-                case "#test":
-                    {
-                        if (cmd.Length == 1)
-                        {
-                            //var base64 = Convert.ToBase64String(File.ReadAllBytes(@"C:\Users\aiqin\Pictures\Elden_Ring_cover.png"));
-                            //var memberInfo = await GetGroupMemberInfo(webSocketConnection, message.GroupId, message.UserId);
-                            //if (memberInfo.Data.Role == "owner")
-                            //{
-                            //    await SendGroupMessage(webSocketConnection, message.GroupId, $"test[CQ:image,file=base64://{base64}]");
-                            //}
-                            
-                        }
-                        break;
-                    }
-            }
+            await OnAdminCommand(webSocketConnection, selfId, message.Message, "", groupId);
         }
 
 
@@ -283,74 +215,102 @@ namespace QinRSS.Service
                 return; //不是群主不处理
             }
 
-            switch (cmd.FirstOrDefault())
+            await OnAdminCommand(webSocketConnection, selfId, message.Message, message.GuildId, message.ChannelId);
+        }
+
+        private async Task OnAdminCommand(IWebSocketConnection webSocketConnection, string selfId, string message, string guildId, string groupOrchannelId)
+        {
+            var args = message.Split(" ");
+            var commandName = args.FirstOrDefault();
+            var returnString = "";
+
+            switch (commandName)
             {
                 case "#add":
                     {
-                        if (cmd.Length >= 3)
+                        if (args.Length >= 3)
                         {
                             try
                             {
-                                if (SubscriptionManager.Instance.Add(selfId, message.GuildId, message.ChannelId, cmd[1], cmd[2]))
+                                //翻译内容
+                                bool translate = args.Any(a => a == "--translate");
+
+                                if (SubscriptionManager.Instance.Add(selfId, guildId, groupOrchannelId, args[1], args[2], translate))
                                 {
-                                    await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"已添加订阅{cmd[1]}");
+                                    returnString = $"已添加订阅{args[1]}";
                                 }
                             }
                             catch (Exception ex)
                             {
-                                await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, ex.Message);
+                                returnString = ex.Message;
                             }
                         }
                         break;
                     }
                 case "#remove":
                     {
-                        if (cmd.Length >= 2)
+                        if (args.Length >= 2)
                         {
-                            SubscriptionManager.Instance.Remove(selfId, message.GuildId, message.ChannelId, cmd[1]);
-                            await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"已移除订阅{cmd[1]}");
+                            SubscriptionManager.Instance.Remove(selfId, guildId, groupOrchannelId, args[1]);
+                            returnString = $"已移除订阅{args[1]}";
                         }
                         break;
                     }
                 case "#clear":
                     {
-                        if (cmd.Length >= 1)
+                        if (args.Length >= 1)
                         {
-                            SubscriptionManager.Instance.Clear(selfId, message.GuildId, message.ChannelId);
-                            await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"已清空订阅{cmd[1]}");
+                            SubscriptionManager.Instance.Clear(selfId, guildId, groupOrchannelId);
+                            returnString = $"已清空订阅{args[1]}";
                         }
                         break;
                     }
                 case "#list":
                     {
-                        if (cmd.Length >= 1)
+                        if (args.Length >= 1)
                         {
-                            var list = SubscriptionManager.Instance.List(selfId, message.GuildId, message.ChannelId);
+                            var list = SubscriptionManager.Instance.List(selfId, guildId, groupOrchannelId);
                             if (!string.IsNullOrEmpty(list))
                             {
-                                await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, list);
-                            } 
+                                returnString = list;
+                            }
                             else
                             {
-                                await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, "列表为空");
+                                returnString = "列表为空";
                             }
-                            
+
                         }
                         break;
                     }
                 case "#test":
                     {
-                        if (cmd.Length >= 1)
+                        if (args.Length >= 1)
                         {
                             var base64 = Convert.ToBase64String(File.ReadAllBytes(@"C:\Users\aiqin\Pictures\Elden_Ring_cover.png"));
-                            await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"test[CQ:image,file=base64://{base64}]");
+                            returnString = $"test[CQ:image,file=base64://{base64}]";
 
                         }
                         break;
                     }
+            
             }
+
+            if (string.IsNullOrEmpty(returnString))
+            {
+                if (string.IsNullOrEmpty(guildId))
+                {
+                    //群消息
+                    await SendGroupMessage(webSocketConnection, groupOrchannelId, returnString);
+                }
+                else
+                {
+                    //频道消息
+                    await SendChannelMessage(webSocketConnection, guildId, groupOrchannelId, returnString);
+                }
+            }
+
+
+
         }
-
-
     }
 }

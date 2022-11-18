@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using QinRSS.Service.OneBotModel;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace QinRSS.Service
 {
@@ -23,7 +24,7 @@ namespace QinRSS.Service
             await webSocketConnection.Send(send);
         }
 
-        public async Task SendGroupMessage(IWebSocketConnection webSocketConnection, long groupId, string text)
+        public async Task SendGroupMessage(IWebSocketConnection webSocketConnection, string groupId, string text)
         {
             JsonObject json = new JsonObject();
             json["action"] = "send_group_msg";//"action": "get_self_info", //send_group_msg
@@ -45,19 +46,8 @@ namespace QinRSS.Service
 
                 if (webSocketConnection.IsAvailable)
                 {
-                    JsonObject json = new JsonObject();
-                    json["action"] = "send_group_msg";//"action": "get_self_info", //send_group_msg
-                    json["params"] = new JsonObject();
-                    json["params"]["group_id"] = $"{groupId}";
-                    //json["params"]["auto_escape"] = true;
-                    json["params"]["message"] = text;
-                    //json["echo"] = Guid.NewGuid().ToString();
-                    var send = json.ToJsonString();
-                    Console.WriteLine(send);
-                    await webSocketConnection.Send(send);
+                    SendGroupMessage(webSocketConnection, groupId, text);
                 }
-
-
             }
         }
 
@@ -74,6 +64,19 @@ namespace QinRSS.Service
             Console.WriteLine(send);
             await webSocketConnection.Send(send);
 
+        }
+
+        public async Task SendChannelMessage(string selfId, string guildId, string channelId, string text)
+        {
+            if (_connections.ContainsKey(selfId))
+            {
+                IWebSocketConnection webSocketConnection = _connections[selfId];
+
+                if (webSocketConnection.IsAvailable)
+                {
+                    await SendChannelMessage(webSocketConnection, guildId, channelId, text);
+                }
+            }
         }
 
         public async Task<OneBotGroupMemberInfoResponse> GetGroupMemberInfo(IWebSocketConnection webSocketConnection, long groupId, long userId)

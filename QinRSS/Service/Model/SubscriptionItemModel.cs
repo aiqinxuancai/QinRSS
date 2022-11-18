@@ -39,6 +39,9 @@ namespace QinRSS.Service.Model
         public string GuildId { get; set; }
 
 
+        [JsonProperty("Translate")]
+        public bool Translate { get; set; }
+
         [JsonProperty("SubscriptionType")]
         public SubscriptionType SubscriptionType { get; set; }
 
