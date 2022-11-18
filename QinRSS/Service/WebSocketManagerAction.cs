@@ -61,7 +61,7 @@ namespace QinRSS.Service
             }
         }
 
-        public async Task SendChannelMessage(IWebSocketConnection webSocketConnection, long guildId, long channelId, string text)
+        public async Task SendChannelMessage(IWebSocketConnection webSocketConnection, string guildId, string channelId, string text)
         {
             JsonObject json = new JsonObject();
             json["action"] = "send_guild_channel_msg";
@@ -76,12 +76,12 @@ namespace QinRSS.Service
 
         }
 
-        public async Task<OneBotGroupMemberInfoMessage> GetGroupMemberInfo(IWebSocketConnection webSocketConnection, long guildId, long userId)
+        public async Task<OneBotGroupMemberInfoResponse> GetGroupMemberInfo(IWebSocketConnection webSocketConnection, long groupId, long userId)
         {
             JsonObject json = new JsonObject();
             json["action"] = "get_group_member_info";
             json["params"] = new JsonObject();
-            json["params"]["group_id"] = $"{guildId}";
+            json["params"]["group_id"] = $"{groupId}";
             json["params"]["user_id"] = $"{userId}";
 
             var echo = Guid.NewGuid().ToString();
@@ -93,7 +93,98 @@ namespace QinRSS.Service
 
             if (message.Item1 == 0)
             {
-                OneBotGroupMemberInfoMessage obj = JsonConvert.DeserializeObject<OneBotGroupMemberInfoMessage>(message.Item2);
+                OneBotGroupMemberInfoResponse obj = JsonConvert.DeserializeObject<OneBotGroupMemberInfoResponse>(message.Item2);
+                return obj;
+            }
+            else
+            {
+                //失败
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 获取频道成员信息
+        /// </summary>
+        /// <param name="webSocketConnection"></param>
+        /// <param name="guildId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<OneBotGroupMemberInfoResponse> GetGuildMemeberProfile(IWebSocketConnection webSocketConnection, string guildId, string userId)
+        {
+            //get_guild_member_profile
+            JsonObject json = new JsonObject();
+            json["action"] = "get_guild_member_profile";
+            json["params"] = new JsonObject();
+            json["params"]["guild_id"] = $"{guildId}";
+            json["params"]["user_id"] = $"{userId}";
+
+            var echo = Guid.NewGuid().ToString();
+            json["echo"] = echo;
+            var send = json.ToJsonString();
+            Console.WriteLine(send);
+            await webSocketConnection.Send(send);
+            var message = await WaitEcho(echo);
+
+            if (message.Item1 == 0)
+            {
+                OneBotGroupMemberInfoResponse obj = JsonConvert.DeserializeObject<OneBotGroupMemberInfoResponse>(message.Item2);
+                return obj;
+            }
+            else
+            {
+                //失败
+            }
+
+            return null;
+        }
+
+        public async Task<OneBotGroupMemberInfoResponse> GetGuildList(IWebSocketConnection webSocketConnection)
+        {
+            //get_guild_list
+            JsonObject json = new JsonObject();
+            json["action"] = "get_guild_list";
+            json["params"] = new JsonObject();
+            var echo = Guid.NewGuid().ToString();
+            json["echo"] = echo;
+            var send = json.ToJsonString();
+            Console.WriteLine(send);
+            await webSocketConnection.Send(send);
+            var message = await WaitEcho(echo);
+
+            if (message.Item1 == 0)
+            {
+                OneBotGroupMemberInfoResponse obj = JsonConvert.DeserializeObject<OneBotGroupMemberInfoResponse>(message.Item2);
+                return obj;
+            }
+            else
+            {
+                //失败
+            }
+
+            return null;
+        }
+
+        public async Task<OnBotGetGuildMetaByGuestResponse> GetGuildMetaByGuest(IWebSocketConnection webSocketConnection, string guildId)
+        {
+            //get_guild_list
+            JsonObject json = new JsonObject();
+            json["action"] = "get_guild_meta_by_guest";
+            json["params"] = new JsonObject();
+            json["params"]["guild_id"] = $"{guildId}";
+            var echo = Guid.NewGuid().ToString();
+            json["echo"] = echo;
+
+           
+            var send = json.ToJsonString();
+            Console.WriteLine(send);
+            await webSocketConnection.Send(send);
+            var message = await WaitEcho(echo);
+
+            if (message.Item1 == 0)
+            {
+                OnBotGetGuildMetaByGuestResponse obj = JsonConvert.DeserializeObject<OnBotGetGuildMetaByGuestResponse>(message.Item2);
                 return obj;
             }
             else

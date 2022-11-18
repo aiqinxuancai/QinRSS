@@ -310,6 +310,15 @@ namespace AngelaAI.QQChannel.Service
 
         public bool Add(string selfId, string guildId, string channelId, string name, string url)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new Exception($"添加失败，名字为空");
+            }
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new Exception($"添加失败，url为空");
+            }
+
             List<SubscriptionItemModel> list = new();
             OneBotRSSModel oneBotRSSModel = null;
             if (_subscriptionModel.Any(a => a.SelfId == selfId))
@@ -327,7 +336,7 @@ namespace AngelaAI.QQChannel.Service
             {
                 //找到了存在相同
                 SimpleLogger.Instance.Error($"添加失败，重复的订阅");
-                return false;
+                throw new Exception($"添加失败，重复的订阅");
             }
 
             SubscriptionItemModel model = new SubscriptionItemModel();

@@ -10,7 +10,7 @@ namespace QinRSS.Service.OneBotModel
     /// <summary>
     /// QQ群消息
     /// </summary>
-    public partial class OneBotGroupNormalMessage
+    public partial class OneBotGroupNormalResponse
     {
         [JsonProperty("post_type")]
         public string PostType { get; set; }

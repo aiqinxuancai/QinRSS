@@ -15,7 +15,7 @@ namespace QinRSS.Service.OneBotModel
     /// <summary>
     /// QQ频道消息
     /// </summary>
-    public partial class OneBotGroupChannelMessage
+    public partial class OneBotGroupChannelResponse
     {
         [JsonProperty("post_type")]
         public string PostType { get; set; }
@@ -27,7 +27,7 @@ namespace QinRSS.Service.OneBotModel
         public long Time { get; set; }
 
         [JsonProperty("self_id")]
-        public long SelfId { get; set; }
+        public string SelfId { get; set; }
 
         [JsonProperty("sub_type")]
         public string SubType { get; set; }
@@ -39,7 +39,7 @@ namespace QinRSS.Service.OneBotModel
         public string GuildId { get; set; }
 
         [JsonProperty("channel_id")]
-        public long ChannelId { get; set; }
+        public string ChannelId { get; set; }
 
         [JsonProperty("message_id")]
         public string MessageId { get; set; }
@@ -63,7 +63,7 @@ namespace QinRSS.Service.OneBotModel
         public string TinyId { get; set; }
 
         [JsonProperty("user_id")]
-        public double UserId { get; set; }
+        public string UserId { get; set; }
     }
 
 

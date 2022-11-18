@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QinRSS.Service.OneBotModel
 {
-    public class OneBotGroupMemberInfoMessage
+    public class OneBotGroupMemberInfoResponse
     {
         [JsonProperty("data")]
         public OneBotGroupMember Data { get; set; }
