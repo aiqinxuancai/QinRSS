@@ -137,7 +137,7 @@ namespace AngelaAI.QQChannel.Service
                     if (!url.StartsWith("http"))
                     {
                         //拼接URL "https://rsshub.uneasy.win" 
-                        url = AppConfig.Data.RSSHubUrl + (url.StartsWith("/") ? "" : "/") + url;
+                        url = UrlHelper.CombineUriToString(AppConfig.Data.RSSHubUrl, url); ;
                     }
 
 
@@ -438,7 +438,7 @@ namespace AngelaAI.QQChannel.Service
             {
                 if (guildId == item.GuildId && item.GroupOrChannelId == channelId)
                 {
-                    ret += $"{item.CustomName} [{item.Name}]{item.Url}\n";
+                    ret += $"{item.CustomName} [{item.Name}] {item.Url}\n";
                 }
             }
 

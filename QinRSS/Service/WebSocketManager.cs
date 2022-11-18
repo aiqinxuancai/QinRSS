@@ -230,9 +230,18 @@ namespace QinRSS.Service
                     }
                 case "#list":
                     {
-                        if (cmd.Length == 1)
+                        if (cmd.Length >= 1)
                         {
-                            await SendGroupMessage(webSocketConnection, message.GroupId, SubscriptionManager.Instance.List(selfId, "", groupId));
+                            var list = SubscriptionManager.Instance.List(selfId, "", groupId);
+                            if (!string.IsNullOrEmpty(list))
+                            {
+                                await SendChannelMessage(webSocketConnection, "", groupId, list);
+                            }
+                            else
+                            {
+                                await SendChannelMessage(webSocketConnection, "", groupId, "列表为空");
+                            }
+
                         }
                         break;
                     }
@@ -278,7 +287,7 @@ namespace QinRSS.Service
             {
                 case "#add":
                     {
-                        if (cmd.Length == 3)
+                        if (cmd.Length >= 3)
                         {
                             try
                             {
@@ -296,7 +305,7 @@ namespace QinRSS.Service
                     }
                 case "#remove":
                     {
-                        if (cmd.Length == 2)
+                        if (cmd.Length >= 2)
                         {
                             SubscriptionManager.Instance.Remove(selfId, message.GuildId, message.ChannelId, cmd[1]);
                             await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"已移除订阅{cmd[1]}");
@@ -305,7 +314,7 @@ namespace QinRSS.Service
                     }
                 case "#clear":
                     {
-                        if (cmd.Length == 1)
+                        if (cmd.Length >= 1)
                         {
                             SubscriptionManager.Instance.Clear(selfId, message.GuildId, message.ChannelId);
                             await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"已清空订阅{cmd[1]}");
@@ -314,7 +323,7 @@ namespace QinRSS.Service
                     }
                 case "#list":
                     {
-                        if (cmd.Length == 1)
+                        if (cmd.Length >= 1)
                         {
                             var list = SubscriptionManager.Instance.List(selfId, message.GuildId, message.ChannelId);
                             if (!string.IsNullOrEmpty(list))
@@ -331,7 +340,7 @@ namespace QinRSS.Service
                     }
                 case "#test":
                     {
-                        if (cmd.Length == 1)
+                        if (cmd.Length >= 1)
                         {
                             var base64 = Convert.ToBase64String(File.ReadAllBytes(@"C:\Users\aiqin\Pictures\Elden_Ring_cover.png"));
                             await SendChannelMessage(webSocketConnection, message.GuildId, message.ChannelId, $"test[CQ:image,file=base64://{base64}]");
@@ -341,6 +350,7 @@ namespace QinRSS.Service
                     }
             }
         }
+
 
     }
 }
