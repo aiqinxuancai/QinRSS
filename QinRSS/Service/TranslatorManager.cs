@@ -105,12 +105,6 @@ namespace QinRSS.Service
             json["replaced"] = true;
             json["browser_id"] = browserId;
 
-            /*
-            {"source":["【Twitter @刀剣乱舞-本丸通信-【公式】】更新了!","----------------------","RT クレアボーテ公式","プレミアムバンダイで予約中の","『#刀剣乱舞 ONLINE ほお紅』が展示開始✨","","Aセット（加州清光・一文字則宗）","Bセット（燭台切光忠・鶴丸国永）の","チークカラーが実際に確認できます💫","※感染予防のため使用はご遠慮頂いています。"],"trans_type":"auto2zh","request_id":"web_fanyi","media":"text","os_type":"web","dict":true,"cached":true,"replaced":true,"detect":true,"user_id":"637727659eff2d0015e5e108"}
-             */
-
-
-
             Dictionary<string, string> headers = new Dictionary<string, string>()
             {
                 {"X-Authorization", "token:qgemv4jr1y38jyq6vhvi" },
