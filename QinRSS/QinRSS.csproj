@@ -12,9 +12,7 @@
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
-    <PackageReference Include="WatsonWebsocket" Version="3.0.2" />
   </ItemGroup>
 
 </Project>

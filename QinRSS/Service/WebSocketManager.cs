@@ -4,6 +4,7 @@ using MiraiAngelaAI.Service;
 using Newtonsoft.Json;
 using QinRSS.Service.OneBotModel;
 using System.Buffers.Text;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json.Nodes;
 using WatsonWebsocket;
@@ -36,6 +37,7 @@ namespace QinRSS.Service
         public async Task StartServiceT()
         {
             var server = new WebSocketServer(AppConfig.Data.WebSocketLocation);
+            Server = server;
             server.Start(socket =>
             {
                 socket.OnOpen = () => Console.WriteLine("Open!");
