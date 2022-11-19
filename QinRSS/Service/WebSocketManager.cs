@@ -10,8 +10,7 @@ namespace QinRSS.Service
 {
     public partial class WebSocketManager
     {
-        /// <summary>
-  
+        private WebSocketServer _server;
 
         private Dictionary<string, IWebSocketConnection> _connections = new Dictionary<string, IWebSocketConnection>();
 
@@ -31,7 +30,9 @@ namespace QinRSS.Service
 
         public async Task StartServiceT()
         {
-            var server = new WebSocketServer(AppConfig.Data.WebSocketLocation);
+            _server = new WebSocketServer(AppConfig.Data.WebSocketLocation);
+            var server = _server;
+
             server.Start(socket =>
             {
                 socket.OnOpen = () => Console.WriteLine("Open!");
