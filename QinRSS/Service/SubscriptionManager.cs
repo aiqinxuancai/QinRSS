@@ -83,6 +83,7 @@ namespace AngelaAI.QQChannel.Service
                     foreach (var subscription in _subscriptionModel)
                     {
                         CheckSubscription(subscription);
+
                     }
                     
                 }
