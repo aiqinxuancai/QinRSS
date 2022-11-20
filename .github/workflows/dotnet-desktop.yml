@@ -16,17 +16,17 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0.*'
-      - run: dotnet publish -c Release --runtime win-x64
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\win-x64\publish\ -DestinationPath .\QinRSS-win-x64.zip
-      - run: dotnet publish -c Release --runtime win-x86
+      - run: dotnet publish -c Release --runtime win-x64 --p:PublishAot=true
+      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\win-x64\native\ -DestinationPath .\QinRSS-win-x64.zip
+      - run: dotnet publish -c Release --runtime win-x86 --p:PublishSingleFile=true
       - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\win-x86\publish\ -DestinationPath .\QinRSS-win-x86.zip
-      - run: dotnet publish -c Release --runtime osx-x64
+      - run: dotnet publish -c Release --runtime osx-x64 --p:PublishSingleFile=true
       - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\osx-x64\publish\ -DestinationPath .\QinRSS-osx-x64.zip
-      - run: dotnet publish -c Release --runtime osx-arm64
+      - run: dotnet publish -c Release --runtime osx-arm64 --p:PublishSingleFile=true
       - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\osx-arm64\publish\ -DestinationPath .\QinRSS-osx-arm64.zip
-      - run: dotnet publish -c Release --runtime linux-arm64
+      - run: dotnet publish -c Release --runtime linux-arm64 --p:PublishSingleFile=true
       - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\linux-arm64\publish\ -DestinationPath .\QinRSS-linux-arm64.zip
-      - run: dotnet publish -c Release --runtime linux-x64
+      - run: dotnet publish -c Release --runtime linux-x64 --p:PublishSingleFile=true
       - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net7.0\linux-x64\publish\ -DestinationPath .\QinRSS-linux-x64.zip
       - name: Create a Release
         uses: ncipollo/release-action@v1
