@@ -8,12 +8,12 @@ namespace QinRSS.Service
     public class AppConfigData
     {
         /// <summary>
-        /// ws监听地址 "ws://127.0.0.1:1089"
+        /// ws监听地址 如"ws://127.0.0.1:1089"
         /// </summary>
         public string? WebSocketLocation { get; set; }
 
         /// <summary>
-        /// RSSHUB站点地址如 https://rsshub.uneasy.win
+        /// RSSHUB站点地址 如"https://rsshub.uneasy.win"
         /// </summary>
         public string? RSSHubUrl { get; set; }
 
