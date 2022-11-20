@@ -7,7 +7,6 @@ using QinRSS.Service;
 using System.Text;
 using QinRSS.Service.Model;
 using QinRSS.Utils;
-using QinRSS.Service;
 
 namespace QinRSS.Service
 {

@@ -1,4 +1,4 @@
-﻿using AngelaAI.QQChannel.Service;
+﻿
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;

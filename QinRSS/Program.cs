@@ -1,5 +1,4 @@
-﻿using AngelaAI.QQChannel.Service;
-using QinRSS.Service;
+﻿using QinRSS.Service;
 using System;
 
 
