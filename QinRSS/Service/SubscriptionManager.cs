@@ -380,6 +380,10 @@ namespace QinRSS.Service
 
             SimpleLogger.Instance.Error($"添加订阅：{model.Url}");
 
+            if (list.Count >= 50) //避免长期运行后订阅文件超大
+            {
+                list.RemoveAt(0);
+            }
             list.Add(model);
 
 
