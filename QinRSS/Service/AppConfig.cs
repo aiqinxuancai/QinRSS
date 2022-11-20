@@ -1,7 +1,8 @@
 ﻿
-using Newtonsoft.Json;
+
 using System;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace QinRSS.Service
 {
@@ -10,12 +11,12 @@ namespace QinRSS.Service
         /// <summary>
         /// ws监听地址 如"ws://127.0.0.1:1089"
         /// </summary>
-        public string? WebSocketLocation { get; set; }
+        public string WebSocketLocation { get; set; } = string.Empty;
 
         /// <summary>
         /// RSSHUB站点地址 如"https://rsshub.app"
         /// </summary>
-        public string? RSSHubUrl { get; set; }
+        public string RSSHubUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// QQ群管理ID
@@ -61,13 +62,15 @@ namespace QinRSS.Service
         {
             try
             {
+                SimpleLogger.Instance.Info($"初始化配置{_configPath}");
                 if (File.Exists(_configPath) == false)
                 {
                     InitDefault();
                     Save();
                     return false;
                 }
-                Data = JsonConvert.DeserializeObject<AppConfigData>(System.IO.File.ReadAllText(_configPath));
+
+                Data = JsonSerializer.Deserialize<AppConfigData>(File.ReadAllText(_configPath));
                 SimpleLogger.Instance.Info($"配置初始化完成");
                 return true;
             }
@@ -85,7 +88,7 @@ namespace QinRSS.Service
             {
                 lock(_lock)
                 {
-                    System.IO.File.WriteAllText(_configPath, JsonConvert.SerializeObject(Data, Formatting.None));
+                    File.WriteAllText(_configPath, JsonSerializer.Serialize(Data));
                     Console.WriteLine($"配置已经存储");
                 }
                 

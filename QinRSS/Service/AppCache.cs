@@ -1,10 +1,10 @@
 ﻿
-using Newtonsoft.Json;
 using PropertyChanged;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace QinRSS.Service
 {
@@ -58,7 +58,7 @@ namespace QinRSS.Service
                     Save();
                     return false;
                 }
-                Data = JsonConvert.DeserializeObject<AppCacheData>(System.IO.File.ReadAllText(_configPath));
+                Data = JsonSerializer.Deserialize<AppCacheData>(File.ReadAllText(_configPath));
                 return true;
             }
             catch (System.Exception ex)
@@ -75,7 +75,7 @@ namespace QinRSS.Service
             {
                 lock(_lock)
                 {
-                    System.IO.File.WriteAllText(_configPath, JsonConvert.SerializeObject(Data, Formatting.None));
+                    File.WriteAllText(_configPath, JsonSerializer.Serialize(Data));
                     Console.WriteLine($"Cache已经存储");
                 }
                 
