@@ -1,5 +1,4 @@
 ﻿
-using AngelaAI.QQChannel.Service;
 using Flurl.Http;
 using Newtonsoft.Json;
 using QinRSS.Utils;

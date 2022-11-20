@@ -1,6 +1,4 @@
-﻿using AngelaAI.QQChannel.Service;
-using Fleck;
-using MiraiAngelaAI.Service;
+﻿using Fleck;
 using Newtonsoft.Json;
 using QinRSS.Service.OneBotModel;
 using System.Buffers.Text;

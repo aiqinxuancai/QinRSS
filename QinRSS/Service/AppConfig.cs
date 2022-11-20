@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 
-namespace MiraiAngelaAI.Service
+namespace QinRSS.Service
 {
     public class AppConfigData
     {
@@ -26,6 +26,11 @@ namespace MiraiAngelaAI.Service
         /// QQ频道管理员ID
         /// </summary>
         public string[] GuildAdmins { get; set; } = new string[0];
+
+        /// <summary>
+        /// 离线大于1天后再上线，首次不发送订阅，避免出现消息轰炸
+        /// </summary>
+        public bool NotSentAfterLongOffline { get; set; }
     }
 
     /// <summary>

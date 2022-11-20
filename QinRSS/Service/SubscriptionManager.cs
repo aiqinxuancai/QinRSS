@@ -3,13 +3,13 @@ using System.Xml;
 using System.ServiceModel.Syndication;
 using System.Diagnostics;
 using HtmlAgilityPack;
-using MiraiAngelaAI.Service;
+using QinRSS.Service;
 using System.Text;
 using QinRSS.Service.Model;
 using QinRSS.Utils;
 using QinRSS.Service;
 
-namespace AngelaAI.QQChannel.Service
+namespace QinRSS.Service
 {
     public class SubscriptionManager
     {
@@ -82,8 +82,18 @@ namespace AngelaAI.QQChannel.Service
                 {
                     foreach (var subscription in _subscriptionModel)
                     {
-                        CheckSubscription(subscription);
-
+                        if (AppCache.Data.LastSentTime != null && 
+                            (DateTime.Now - (DateTime)AppCache.Data.LastSentTime).TotalDays >= 1 &&
+                            AppConfig.Data.NotSentAfterLongOffline)
+                        {
+                            CheckSubscription(subscription, true);
+                        } 
+                        else
+                        {
+                            CheckSubscription(subscription);
+                        }
+                        
+                        AppCache.Data.LastSentTime = DateTime.Now;
                     }
                     
                 }

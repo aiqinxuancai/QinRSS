@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AngelaAI.QQChannel.Service
+namespace QinRSS.Service
 {
     public class SimpleLogger
     {
