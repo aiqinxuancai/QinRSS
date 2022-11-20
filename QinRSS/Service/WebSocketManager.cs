@@ -183,7 +183,9 @@ namespace QinRSS.Service
             }
 
             var memberInfo = await GetGroupMemberInfo(webSocketConnection, message.GroupId, message.UserId);
-            if (memberInfo.Data.Role != "owner")
+            var isQinESSAdmin = AppConfig.Data.GroupAdmins.Any(a => a == message.UserId);
+
+            if (memberInfo.Data.Role != "owner" && !isQinESSAdmin)
             {
                 return; //不是群主不处理
             }
@@ -207,10 +209,12 @@ namespace QinRSS.Service
             }
 
             var memberInfo = await GetGuildMetaByGuest(webSocketConnection, message.GuildId);
-            if (memberInfo.Data.OwnerId != message.Sender.UserId)
+            var isQinESSAdmin = AppConfig.Data.GuildAdmins.Any(a => a == message.Sender.UserId);
+            if (memberInfo.Data.OwnerId != message.Sender.UserId && !isQinESSAdmin)
             {
                 return; //不是群主不处理
             }
+
 
             await OnAdminCommand(webSocketConnection, selfId, message.Message, message.GuildId, message.ChannelId);
         }
@@ -220,6 +224,8 @@ namespace QinRSS.Service
             var args = message.Split(" ");
             var commandName = args.FirstOrDefault();
             var returnString = "";
+
+            
 
             switch (commandName)
             {

@@ -10,16 +10,22 @@ namespace MiraiAngelaAI.Service
         /// <summary>
         /// ws监听地址 "ws://127.0.0.1:1089"
         /// </summary>
-        public string WebSocketLocation { get; set; }
+        public string? WebSocketLocation { get; set; }
 
         /// <summary>
         /// RSSHUB站点地址如 https://rsshub.uneasy.win
         /// </summary>
-        public string RSSHubUrl { get; set; }
+        public string? RSSHubUrl { get; set; }
 
+        /// <summary>
+        /// QQ群管理ID
+        /// </summary>
+        public long[] GroupAdmins { get; set; } = new long[0];
 
-        
-
+        /// <summary>
+        /// QQ频道管理员ID
+        /// </summary>
+        public string[] GuildAdmins { get; set; } = new string[0];
     }
 
     /// <summary>
