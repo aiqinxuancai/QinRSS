@@ -1,0 +1,7 @@
+{
+  "WebSocketLocation": "ws://127.0.0.1:1868",
+  "RSSHubUrl": "https://rsshub.app",
+  "GroupAdmins": [ 123456, 123456 ],
+  "GuildAdmins": [ "123465", "123456" ],
+  "NotSentAfterLongOffline": false
+}

@@ -13,7 +13,7 @@ namespace QinRSS.Service
         public string? WebSocketLocation { get; set; }
 
         /// <summary>
-        /// RSSHUB站点地址 如"https://rsshub.uneasy.win"
+        /// RSSHUB站点地址 如"https://rsshub.app"
         /// </summary>
         public string? RSSHubUrl { get; set; }
 
@@ -39,6 +39,9 @@ namespace QinRSS.Service
     public class AppConfig
     {
         public static AppConfigData Data { set; get; } = new AppConfigData();
+
+
+        public static string ConfigPath => _configPath;
 
         private static string _configPath = Path.Combine(AppContext.BaseDirectory, "Config.json");
 

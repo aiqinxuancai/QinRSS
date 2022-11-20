@@ -13,6 +13,13 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
         static async Task MainAsync()
         {
+            //基础检查
+            if (!File.Exists(AppConfig.ConfigPath))
+            {
+                Console.WriteLine($"{AppConfig.ConfigPath} 不存在，请创建配置文件");
+                Console.ReadLine();
+                return;
+            }
 
             //启动ws服务
             await WebSocketManager.Instance.StartServiceT();
