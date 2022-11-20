@@ -68,6 +68,7 @@ namespace QinRSS.Service
                     return false;
                 }
                 Data = JsonConvert.DeserializeObject<AppConfigData>(System.IO.File.ReadAllText(_configPath));
+                SimpleLogger.Instance.Info($"配置初始化完成");
                 return true;
             }
             catch (System.Exception ex)

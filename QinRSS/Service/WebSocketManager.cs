@@ -28,6 +28,7 @@ namespace QinRSS.Service
 
         public async Task StartServiceT()
         {
+            SimpleLogger.Instance.Error($"WebSocketServer启动{AppConfig.Data.WebSocketLocation}");
             _server = new WebSocketServer(AppConfig.Data.WebSocketLocation);
             var server = _server;
 
