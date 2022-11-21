@@ -94,7 +94,12 @@ namespace QinRSS.Service
                         {
                             case "normal":
                                 {
-                                    var obj = JsonConvert.DeserializeObject<OneBotGroupNormalResponse>(message);
+                                    //消息种类和方法太多了，所以不使用DeserializeObject反序列化了
+
+                                    //var obj = JsonConvert.DeserializeObject<OneBotGroupNormalMessage>(message);
+
+                                    JsonObject obj = (JsonObject)JsonNode.Parse(message);
+
                                     //TODO 根据self_id来处理
                                     await OnOneBotGroupNormalMessage(obj, webSocketConnection);
                                     break;
@@ -109,8 +114,9 @@ namespace QinRSS.Service
                         {
                             case "channel":
                                 {
-                                    var obj = JsonConvert.DeserializeObject<OneBotGroupChannelResponse>(message);
+                                    //var obj = JsonConvert.DeserializeObject<OneBotGroupChannelMessage>(message);
                                     //TODO 根据self_id来处理
+                                    JsonObject obj = (JsonObject)JsonNode.Parse(message);
                                     await OnOneBotGroupChannelMessage(obj, webSocketConnection);
                                     break;
                                 }
@@ -166,56 +172,77 @@ namespace QinRSS.Service
         /// </summary>
         /// <param name="message"></param>
         /// <param name="webSocketConnection"></param>
-        private async Task OnOneBotGroupNormalMessage(OneBotGroupNormalResponse message, IWebSocketConnection webSocketConnection)
+        private async Task OnOneBotGroupNormalMessage(JsonObject message, IWebSocketConnection webSocketConnection)
         {
-            var cmd = message.Message.Split(" ");
+            var messageContent = message["raw_message"]?.ToString();
 
-            var selfId = $"{message.SelfId}";
-            var groupId = $"{message.GroupId}";
+            var cmd = messageContent.Split(" ");
+
+            var selfId = message["self_id"]?.ToString();
+            var groupId = (long)message["group_id"];
+            var userId = (long)message["user_id"];
+
 
             string[] actions = { "#add", "#remove", "#clear", "#list" }; 
 
            
-            if (!actions.Any(a => message.Message.StartsWith(message.Message)))
+            if (!actions.Any(a => messageContent.StartsWith(a)))
             {
                 return; //非命令不处理
             }
 
-            var memberInfo = await GetGroupMemberInfo(webSocketConnection, message.GroupId, message.UserId);
-            var isQinESSAdmin = AppConfig.Data.GroupAdmins.Any(a => a == message.UserId);
+            var memberInfo = await GetGroupMemberInfo(webSocketConnection, groupId, userId);
+            var isQinESSAdmin = AppConfig.Data.GroupAdmins.Any(a => a == userId);
 
             if (memberInfo.Data.Role != "owner" && !isQinESSAdmin)
             {
                 return; //不是群主不处理
             }
 
-            await OnAdminCommand(webSocketConnection, selfId, message.Message, "", groupId);
+            await OnAdminCommand(webSocketConnection, selfId, messageContent, "", $"{groupId}");
         }
 
 
-        private async Task OnOneBotGroupChannelMessage(OneBotGroupChannelResponse message, IWebSocketConnection webSocketConnection)
+        private async Task OnOneBotGroupChannelMessage(JsonObject message, IWebSocketConnection webSocketConnection)
         {
-            var cmd = message.Message.Split(" ");
 
-            var selfId = $"{message.SelfId}";
- 
+            JsonNode m = message["message"];
+            var messageContent = "";
+            if (m.GetType() == typeof(JsonArray))
+            {
+                var textObj = m.AsArray().FirstOrDefault(a => (string)a["type"] == "text");
+                if (textObj != null)
+                {
+                    messageContent = (string)textObj["data"]["text"];
+                }
+            }
+
+
+            var cmd = messageContent.Split(" ");
+
+            var selfId = message["self_id"]?.ToString();
+            var guildId = (string)message["guild_id"];
+            var userId = message["sender"]["user_id"].ToString();
+            var channelId = (string)message["channel_id"];
+
+
             string[] actions = { "#add", "#remove", "#clear", "#list", "#test"};
 
 
-            if (!actions.Any(a => message.Message.StartsWith(message.Message)))
+            if (!actions.Any(a => messageContent.StartsWith(a)))
             {
                 return; //非命令不处理
             }
 
-            var memberInfo = await GetGuildMetaByGuest(webSocketConnection, message.GuildId);
-            var isQinESSAdmin = AppConfig.Data.GuildAdmins.Any(a => a == message.Sender.UserId);
-            if (memberInfo.Data.OwnerId != message.Sender.UserId && !isQinESSAdmin)
+            var memberInfo = await GetGuildMetaByGuest(webSocketConnection, guildId);
+            var isQinESSAdmin = AppConfig.Data.GuildAdmins.Any(a => a == userId);
+            if (memberInfo.Data.OwnerId != userId && !isQinESSAdmin)
             {
                 return; //不是群主不处理
             }
 
 
-            await OnAdminCommand(webSocketConnection, selfId, message.Message, message.GuildId, message.ChannelId);
+            await OnAdminCommand(webSocketConnection, selfId, messageContent, guildId, channelId);
         }
 
         private async Task OnAdminCommand(IWebSocketConnection webSocketConnection, string selfId, string message, string guildId, string groupOrchannelId)
@@ -297,7 +324,7 @@ namespace QinRSS.Service
             
             }
 
-            if (string.IsNullOrEmpty(returnString))
+            if (!string.IsNullOrEmpty(returnString))
             {
                 if (string.IsNullOrEmpty(guildId))
                 {
