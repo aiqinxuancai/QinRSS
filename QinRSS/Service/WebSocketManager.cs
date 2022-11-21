@@ -213,10 +213,6 @@ namespace QinRSS.Service
             JsonNode p = message["post_type"];
             var messageContent = "";
 
-            if (p.GetValue<JsonElement>().ValueKind == JsonValueKind.String)
-            {
-
-            }
 
             if (m.GetType() == typeof(JsonArray))
             {
@@ -226,6 +222,10 @@ namespace QinRSS.Service
                     messageContent = (string)textObj["data"]["text"];
                 }
             } 
+            else if (m.GetValue<JsonElement>().ValueKind == JsonValueKind.String)
+            {
+                messageContent = (string)m;
+            }
            
 
 
