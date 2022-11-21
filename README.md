@@ -25,9 +25,6 @@ QinRSS是基于OneBot12协议的订阅发送机器人，支持从RSSHub站点获
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe
 
 ```yml
-message:
-  # 上报数据类型目前支持string，接下来会把array支持上
-  post-format: string
 - ws-reverse:
     universal: ws://127.0.0.1:1868
 ```
