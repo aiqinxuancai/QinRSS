@@ -1,7 +1,9 @@
 ﻿using Fleck;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using QinRSS.Service.OneBotModel;
 using System.Buffers.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace QinRSS.Service
@@ -98,7 +100,7 @@ namespace QinRSS.Service
 
                                     //var obj = JsonConvert.DeserializeObject<OneBotGroupNormalMessage>(message);
 
-                                    JsonObject obj = (JsonObject)JsonNode.Parse(message);
+                                    JsonObject obj = JsonNode.Parse(message) as JsonObject;
 
                                     //TODO 根据self_id来处理
                                     await OnOneBotGroupNormalMessage(obj, webSocketConnection);
@@ -116,7 +118,8 @@ namespace QinRSS.Service
                                 {
                                     //var obj = JsonConvert.DeserializeObject<OneBotGroupChannelMessage>(message);
                                     //TODO 根据self_id来处理
-                                    JsonObject obj = (JsonObject)JsonNode.Parse(message);
+                                    JsonObject obj = JsonNode.Parse(message) as JsonObject;
+                                    //JObject obj = JObject.Parse(message);
                                     await OnOneBotGroupChannelMessage(obj, webSocketConnection);
                                     break;
                                 }
@@ -207,7 +210,14 @@ namespace QinRSS.Service
         {
 
             JsonNode m = message["message"];
+            JsonNode p = message["post_type"];
             var messageContent = "";
+
+            if (p.GetValue<JsonElement>().ValueKind == JsonValueKind.String)
+            {
+
+            }
+
             if (m.GetType() == typeof(JsonArray))
             {
                 var textObj = m.AsArray().FirstOrDefault(a => (string)a["type"] == "text");
@@ -215,7 +225,8 @@ namespace QinRSS.Service
                 {
                     messageContent = (string)textObj["data"]["text"];
                 }
-            }
+            } 
+           
 
 
             var cmd = messageContent.Split(" ");
