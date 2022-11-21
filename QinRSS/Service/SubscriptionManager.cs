@@ -7,6 +7,7 @@ using QinRSS.Service;
 using System.Text;
 using QinRSS.Service.Model;
 using QinRSS.Utils;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace QinRSS.Service
 {
@@ -296,8 +297,9 @@ namespace QinRSS.Service
         {
             var list = new List<string>();
             var images = doc.DocumentNode.SelectNodes("/img");
-
-            if (images == null)
+            var videos = doc.DocumentNode.SelectNodes("/video");
+            
+            if (images == null && videos == null)
             {
                 return list;
             }
@@ -308,6 +310,19 @@ namespace QinRSS.Service
                 if (!string.IsNullOrWhiteSpace(src))
                 {
                     list.Add(src);
+                }
+            }
+
+            foreach (var video in videos)
+            {
+                //视频缩略图
+                if (video.Attributes.Contains("poster"))
+                {
+                    var poster = video.Attributes["poster"]?.Value;
+                    if (!string.IsNullOrWhiteSpace(poster))
+                    {
+                        list.Add(poster);
+                    }
                 }
             }
 
