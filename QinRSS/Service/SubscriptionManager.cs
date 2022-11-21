@@ -135,6 +135,10 @@ namespace QinRSS.Service
         {
             lock (_lock)
             {
+                //缓存，避免同一个URL多次请求
+                Dictionary<string, SyndicationFeed> urlCache = new Dictionary<string, SyndicationFeed>();
+
+
                 SimpleLogger.Instance.Info($"检查{model.SelfId}订阅...");
                 foreach (var subscription in model.AllSubscription)
                 {
@@ -152,17 +156,28 @@ namespace QinRSS.Service
                     XmlReader reader;
                     SyndicationFeed feed;
 
-                    try
+                    if (urlCache.ContainsKey(url))
                     {
-                        reader = XmlReader.Create(url);
-                        feed = SyndicationFeed.Load(reader);
-                        reader.Close();
+                        //从缓存取
+                        feed = urlCache[url];
                     }
-                    catch (Exception e)
+                    else
                     {
-                        SimpleLogger.Instance.Info($"无法访问订阅：{url}");
-                        continue;
+                        try
+                        {
+                            reader = XmlReader.Create(url);
+                            feed = SyndicationFeed.Load(reader);
+                            reader.Close();
+                            urlCache.Add(url, feed);
+                        }
+                        catch (Exception e)
+                        {
+                            SimpleLogger.Instance.Info($"无法访问订阅：{url}");
+                            continue;
+                        }
                     }
+
+
 
                     subscription.TaskFullCount = feed.Items.Count();
                     subscription.Name = feed.Title.Text;
