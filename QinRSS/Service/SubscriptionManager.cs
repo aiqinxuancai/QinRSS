@@ -364,7 +364,7 @@ namespace QinRSS.Service
                 _subscriptionModel.Add(oneBotRSSModel);
             }
 
-            if (list.ToList().Find( a => { return a.Url == url; }) != null)
+            if (list.ToList().Find( a => { return a.Url == url && a.GroupOrChannelId == guildId && a.GuildId == guildId; }) != null)
             {
                 //找到了存在相同
                 SimpleLogger.Instance.Error($"添加失败，重复的订阅");
