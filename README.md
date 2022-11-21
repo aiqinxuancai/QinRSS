@@ -28,6 +28,7 @@ QinRSS是基于OneBot12协议的订阅发送机器人，支持从RSSHub站点获
 - ws-reverse:
     universal: ws://127.0.0.1:1868
 ```
+注意：频道主和QQ群主默认拥有操作订阅的权限
 
 ### 使用方法
 
