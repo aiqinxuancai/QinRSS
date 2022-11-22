@@ -431,15 +431,9 @@ namespace QinRSS.Service
                 list.RemoveAt(0);
             }
             list.Add(model);
-
-
             Save();
-
-
             Task.Run(() => {
-
                 CheckSubscription(oneBotRSSModel, true);
-
             });
             
             return true;
