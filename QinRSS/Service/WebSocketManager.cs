@@ -237,7 +237,7 @@ namespace QinRSS.Service
             var channelId = (string)message["channel_id"];
 
 
-            string[] actions = { "#add", "#remove", "#clear", "#list", "#test"};
+            string[] actions = { "#add", "#remove", "#clear", "#list", "#help", "#test" };
 
 
             if (!actions.Any(a => messageContent.StartsWith(a)))
@@ -332,7 +332,27 @@ namespace QinRSS.Service
                         }
                         break;
                     }
-            
+                case "#help":
+                    {
+                        returnString = """
+                            增加订阅
+                            #add [自定义名称] [订阅地址如twitter/user/TOUKEN_STAFF]
+                            可在尾部附加参数为 --translate 发送翻译到中文后的内容
+
+                            删除订阅
+                            #remove [自定义名称]  
+
+                            清除本频道、群中所有订阅
+                            #clear 
+
+                            查看订阅
+                            #list
+
+                            更多内容请前往 https://github.com/aiqinxuancai/QinRSS
+                            """;
+                        break;
+                    }
+
             }
 
             if (!string.IsNullOrEmpty(returnString))
