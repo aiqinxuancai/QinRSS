@@ -16,11 +16,11 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 ```
 
 * **WebSocketLocation** 监听的ws地址
-* RSSHubUrl RSSHub站点地址，可自行寻找、搭建替换
-* GroupAdmins QQ群管理员ID
-* GuildAdmins QQ频道管理员ID
-* NotSentAfterLongOffline 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
-* RunInterval 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
+* **RSSHubUrl** RSSHub站点地址，可自行寻找、搭建替换
+* **GroupAdmins** QQ群管理员ID
+* **GuildAdmins** QQ频道管理员ID
+* **NotSentAfterLongOffline** 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
+* **RunInterval** 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
 
 
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe
