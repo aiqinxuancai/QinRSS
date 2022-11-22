@@ -360,7 +360,7 @@ namespace QinRSS.Service
 
         public void Load()
         {
-            string fileName = @$"Subscription.json";
+            string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json"); 
             Debug.WriteLine($"准备载入{fileName}");
             if (File.Exists(fileName))
             {
@@ -376,7 +376,7 @@ namespace QinRSS.Service
         public void Save()
         {
             Debug.WriteLine("保存订阅");
-            string fileName = @$"Subscription.json";
+            string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
             var content = JsonConvert.SerializeObject(_subscriptionModel);
             File.WriteAllText(fileName, content);
         }
