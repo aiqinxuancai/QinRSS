@@ -254,7 +254,14 @@ namespace QinRSS.Service
         /// <param name="url"></param>
         /// <param name="imageUrls"></param>
         /// <returns></returns>
-        private async Task SendSubscription(string selfId, string guildId, string channelId, DateTime time, string content, string url, List<string> imageUrls, bool translate)
+        private async Task SendSubscription(string selfId, 
+            string guildId, 
+            string channelId, 
+            DateTime time, 
+            string content, 
+            string url, 
+            IEnumerable<string> imageUrls, 
+            bool translate)
         {
             SimpleLogger.Instance.Info($"开始发送订阅{channelId}");
             SimpleLogger.Instance.Info($"{time} {url}");
@@ -308,15 +315,15 @@ namespace QinRSS.Service
         }
 
 
-        public List<string> GetImageUrl(HtmlDocument doc)
+        public IEnumerable<string> GetImageUrl(HtmlDocument doc)
         {
-            var list = new List<string>();
+            //var list = new List<string>();
             var images = doc.DocumentNode.SelectNodes("/img");
             var videos = doc.DocumentNode.SelectNodes("/video");
             
             if (images == null && videos == null)
             {
-                return list;
+                yield break;
             }
 
             foreach (var image in images)
@@ -324,7 +331,8 @@ namespace QinRSS.Service
                 var src = image.Attributes["src"]?.Value;
                 if (!string.IsNullOrWhiteSpace(src))
                 {
-                    list.Add(src);
+                    //list.Add(src);
+                    yield return src;
                 }
             }
 
@@ -336,12 +344,12 @@ namespace QinRSS.Service
                     var poster = video.Attributes["poster"]?.Value;
                     if (!string.IsNullOrWhiteSpace(poster))
                     {
-                        list.Add(poster);
+                        yield return poster;
                     }
                 }
             }
 
-            return list;
+            //return list;
         }
 
 
