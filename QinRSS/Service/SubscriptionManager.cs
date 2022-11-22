@@ -156,7 +156,7 @@ namespace QinRSS.Service
                     }
 
 
-                    SimpleLogger.Instance.Info($"订阅地址：{url}");
+                    SimpleLogger.Instance.Info($"检查订阅地址：{url}");
 
                     XmlReader reader;
                     SyndicationFeed feed;
@@ -177,7 +177,7 @@ namespace QinRSS.Service
                         }
                         catch (Exception e)
                         {
-                            SimpleLogger.Instance.Info($"无法访问订阅：{url}");
+                            SimpleLogger.Instance.Error($"无法访问订阅：{url}");
                             continue;
                         }
                     }
@@ -189,7 +189,7 @@ namespace QinRSS.Service
 
         
 
-                    SimpleLogger.Instance.Info($"订阅标题：{subscription.Name} 订阅总任务数：{subscription.TaskFullCount}");
+                    SimpleLogger.Instance.Info($"获得订阅标题：{subscription.Name} 订阅总任务数：{subscription.TaskFullCount}");
 
                     foreach (SyndicationItem item in feed.Items)
                     {
@@ -228,7 +228,8 @@ namespace QinRSS.Service
                                         subscription.GuildId, 
                                         subscription.GroupOrChannelId, 
                                         dateTime, 
-                                        $"{subscription.Name}更新了！\n{iStr}", 
+                                        subscription.Name,
+                                        iStr, 
                                         itemUrl, 
                                         imageUrls,
                                         subscription.Translate).Wait();
@@ -262,7 +263,8 @@ namespace QinRSS.Service
         private async Task SendSubscription(string selfId, 
             string guildId, 
             string channelId, 
-            DateTime time, 
+            DateTime time,
+            string title,
             string content, 
             string url, 
             IEnumerable<string> imageUrls, 
@@ -286,16 +288,16 @@ namespace QinRSS.Service
                     {
                         translateContent += $"\n{item}";
                     }
-                    sendText += $"{content}\n{translateContent}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+                    sendText += $"{title}\n{content}\n{translateContent}\n";
                 }
                 else
                 {
-                    sendText = $"{content}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+                    sendText = $"{title}\n{content}\n";
                 }
             }
             else
             {
-                sendText = $"{content}\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+                sendText = $"{title}\n{content}\n";
             }
 
             //图片CQ码
@@ -304,8 +306,9 @@ namespace QinRSS.Service
                 sendText += $"\n[CQ:image,file={imageUrl}]";
             }
 
-            Console.WriteLine(sendText);
+            sendText += $"更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
 
+            Console.WriteLine(sendText);
 
             if (string.IsNullOrEmpty(guildId))
             {
