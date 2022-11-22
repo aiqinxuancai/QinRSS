@@ -288,7 +288,7 @@ namespace QinRSS.Service
                     {
                         translateContent += $"\n{item}";
                     }
-                    sendText += $"{title}\n{content}\n{translateContent}\n";
+                    sendText += $"{title}\n原文：\n{content}\n译文：\n{translateContent}\n";
                 }
                 else
                 {
