@@ -32,6 +32,11 @@ namespace QinRSS.Service
         /// 离线大于1天后再上线，首次不发送订阅，避免出现消息轰炸
         /// </summary>
         public bool NotSentAfterLongOffline { get; set; }
+
+        /// <summary>
+        /// 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
+        /// </summary>
+        public int RunInterval { get; set; } = 60;
     }
 
     /// <summary>

@@ -3,5 +3,6 @@
   "RSSHubUrl": "https://rsshub.app",
   "GroupAdmins": [ 123456, 123456 ],
   "GuildAdmins": [ "123465", "123456" ],
-  "NotSentAfterLongOffline": false
+  "NotSentAfterLongOffline": false,
+  "RunInterval": 120
 }

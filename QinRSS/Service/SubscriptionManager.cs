@@ -101,9 +101,14 @@ namespace QinRSS.Service
                 {
                     SimpleLogger.Instance.Error(ex.ToString());
                 }
-                
 
-                TaskHelper.Sleep(1000 * 60 * 1, 100, cancellationToken);
+                var runInterval = AppConfig.Data.RunInterval;
+                if (runInterval <= 0)
+                {
+                    runInterval = 60;
+                }
+
+                TaskHelper.Sleep(1000 * runInterval, 100, cancellationToken);
             }
         }
 
