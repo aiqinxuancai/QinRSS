@@ -329,35 +329,37 @@ namespace QinRSS.Service
             var images = doc.DocumentNode.SelectNodes("/img");
             var videos = doc.DocumentNode.SelectNodes("/video");
             
-            if (images == null && videos == null)
+            if (images != null)
             {
-                yield break;
-            }
-
-            foreach (var image in images)
-            {
-                var src = image.Attributes["src"]?.Value;
-                if (!string.IsNullOrWhiteSpace(src))
+                foreach (var image in images)
                 {
-                    //list.Add(src);
-                    yield return src;
-                }
-            }
-
-            foreach (var video in videos)
-            {
-                //视频缩略图
-                if (video.Attributes.Contains("poster"))
-                {
-                    var poster = video.Attributes["poster"]?.Value;
-                    if (!string.IsNullOrWhiteSpace(poster))
+                    var src = image.Attributes["src"]?.Value;
+                    if (!string.IsNullOrWhiteSpace(src))
                     {
-                        yield return poster;
+                        //list.Add(src);
+                        yield return src;
                     }
                 }
             }
 
-            //return list;
+
+
+            if (videos != null)
+            {
+                foreach (var video in videos)
+                {
+                    //视频缩略图
+                    if (video.Attributes.Contains("poster"))
+                    {
+                        var poster = video.Attributes["poster"]?.Value;
+                        if (!string.IsNullOrWhiteSpace(poster))
+                        {
+                            yield return poster;
+                        }
+                    }
+                }
+            }
+            yield break;
         }
 
 
