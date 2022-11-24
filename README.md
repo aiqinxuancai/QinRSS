@@ -9,7 +9,7 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 webSocketLocation: 'ws://127.0.0.1:1868'
 
 # RSSHub站点地址，可自行寻找、搭建替换
-rSSHubUrl: 'https://rsshub.app'
+rssHubUrl: 'https://rsshub.app'
 
 # QQ群管理员ID
 groupAdmins: [123456, 123456]
