@@ -3,6 +3,8 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
 
 namespace QinRSS.Service
 {
@@ -55,12 +57,13 @@ namespace QinRSS.Service
     /// </summary>
     public class AppConfig
     {
+        
         public static AppConfigData Data { set; get; } = new AppConfigData();
 
 
         public static string ConfigPath => _configPath;
 
-        private static string _configPath = Path.Combine(AppContext.BaseDirectory, "Config.json");
+        private static string _configPath = Path.Combine(AppContext.BaseDirectory, "Config.yml");
 
         private static object _lock = new object();
 
@@ -85,8 +88,14 @@ namespace QinRSS.Service
                     Save();
                     return false;
                 }
+                var deserializer = new DeserializerBuilder()
+                    .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
+                    .Build();
 
-                Data = JsonSerializer.Deserialize<AppConfigData>(File.ReadAllText(_configPath));
+                var p = deserializer.Deserialize<AppConfigData>(File.ReadAllText(_configPath));
+
+                Data = p;
+                //Data = JsonSerializer.Deserialize<AppConfigData>(File.ReadAllText(_configPath));
                 SimpleLogger.Instance.Info($"配置初始化完成");
                 return true;
             }
@@ -104,7 +113,14 @@ namespace QinRSS.Service
             {
                 lock(_lock)
                 {
-                    File.WriteAllText(_configPath, JsonSerializer.Serialize(Data));
+
+                    var serializer = new SerializerBuilder()
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .Build();
+                    var yaml = serializer.Serialize(Data);
+                    //System.Console.WriteLine(yaml);
+                    File.WriteAllText(_configPath, yaml);
+                    //File.WriteAllText(_configPath, JsonSerializer.Serialize(Data));
                     Console.WriteLine($"配置已经存储");
                 }
                 
