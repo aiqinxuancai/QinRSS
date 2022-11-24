@@ -2,7 +2,7 @@
 QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSHub站点获取内容并发送到QQ群或QQ频道中。已在go-cqhttp的rc3中进行测试通过。
 
 ### 部署方法
-下载对应系统的程序包，编辑Config.json文件，
+下载对应系统的程序包，编辑Config.yml文件，
 
 ```yml
 # 监听的ws地址
