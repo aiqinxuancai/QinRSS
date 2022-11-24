@@ -89,8 +89,8 @@ namespace QinRSS.Service
                     return false;
                 }
                 var deserializer = new DeserializerBuilder()
-                    .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
-                    .Build();
+                                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                                .Build();
 
                 var p = deserializer.Deserialize<AppConfigData>(File.ReadAllText(_configPath));
 
@@ -114,9 +114,7 @@ namespace QinRSS.Service
                 lock(_lock)
                 {
 
-                    var serializer = new SerializerBuilder()
-                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                        .Build();
+                    var serializer = new SerializerBuilder().Build();
                     var yaml = serializer.Serialize(Data);
                     //System.Console.WriteLine(yaml);
                     File.WriteAllText(_configPath, yaml);
