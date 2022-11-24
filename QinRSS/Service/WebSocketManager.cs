@@ -2,9 +2,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QinRSS.Service.OneBotModel;
+using QinRSS.Utils;
 using System.Buffers.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Web;
 
 namespace QinRSS.Service
 {
@@ -186,7 +188,7 @@ namespace QinRSS.Service
             var userId = (long)message["user_id"];
 
 
-            string[] actions = { "#add", "#remove", "#clear", "#list" }; 
+            string[] actions = { "#add", "#remove", "#clear", "#list", "#help", "#test" }; 
 
            
             if (!actions.Any(a => messageContent.StartsWith(a)))
@@ -326,8 +328,23 @@ namespace QinRSS.Service
                     {
                         if (args.Length >= 1)
                         {
-                            var base64 = Convert.ToBase64String(File.ReadAllBytes(@"C:\Users\aiqin\Pictures\Elden_Ring_cover.png"));
-                            returnString = $"test[CQ:image,file=base64://{base64}]";
+                            //var base64 = Convert.ToBase64String(File.ReadAllBytes(@"C:\Users\aiqin\Pictures\Elden_Ring_cover.png"));
+
+         
+                            returnString = $"""
+                                Twitter @刀剣乱舞-本丸通信-【公式】
+                                RT 刀剣乱舞STORE【残り4日】ご好評頂いております「刀剣乱舞STORE KYOTO」は11月27日(日)まで開催！新商品を多数取り揃えているほか、購入特典もございますのでどうぞお見逃しなく…！皆様のご来店をお待ちしております。STORE▶#刀剣乱舞 #とうらぶ https://www.toulove-store.com/index_kyoto.html
+
+                                [CQ:image,file=https://pbs.twimg.com/media/FiTTwKJUYAEDfnB?format=jpg&name=orig]
+                                [CQ:image,file=https://pbs.twimg.com/media/FiTTxKjVUAEYQSr?format=jpg&name=orig]
+                                [CQ:image,file=https://pbs.twimg.com/media/FiTTyCjUoAEZp_G?format=jpg&amp;name=orig]
+                                [CQ:image,file=https://pbs.twimg.com/media/FiTTzAGUAAEADji?format=jpg&amp;name=orig]
+                                更新时间：2022-11-24 13:00:01
+                                链接：https://twitter.com/toulove_store/status/1595643376472182784
+                                
+                                """;
+                            returnString = HttpUtility.HtmlDecode(returnString);
+                            returnString = await DownloadHelper.MessageImageUrlToBase64(returnString);
 
                         }
                         break;

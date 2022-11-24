@@ -34,7 +34,7 @@ namespace QinRSS.Service
             json["params"]["message"] = text;
             //json["echo"] = Guid.NewGuid().ToString();
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
         }
 
@@ -61,7 +61,7 @@ namespace QinRSS.Service
             json["params"]["message"] = text;
             //json["echo"] = Guid.NewGuid().ToString();
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
 
         }
@@ -90,7 +90,7 @@ namespace QinRSS.Service
             var echo = Guid.NewGuid().ToString();
             json["echo"] = echo;
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
             var message = await WaitEcho(echo);
 
@@ -126,7 +126,7 @@ namespace QinRSS.Service
             var echo = Guid.NewGuid().ToString();
             json["echo"] = echo;
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
             var message = await WaitEcho(echo);
 
@@ -152,7 +152,7 @@ namespace QinRSS.Service
             var echo = Guid.NewGuid().ToString();
             json["echo"] = echo;
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
             var message = await WaitEcho(echo);
 
@@ -181,7 +181,7 @@ namespace QinRSS.Service
 
            
             var send = json.ToJsonString();
-            Console.WriteLine(send);
+            //Console.WriteLine(send);
             await webSocketConnection.Send(send);
             var message = await WaitEcho(echo);
 

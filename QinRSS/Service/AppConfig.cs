@@ -37,6 +37,17 @@ namespace QinRSS.Service
         /// 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
         /// </summary>
         public int RunInterval { get; set; } = 60;
+
+
+        /// <summary>
+        /// 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
+        /// </summary>
+        public bool SelfDownloadedImages { get; set; }
+
+        /// <summary>
+        /// 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080，仅在SelfDownloadedImages设置为true时可用
+        /// </summary>
+        public string ImageProxy { get; set; } = string.Empty;
     }
 
     /// <summary>

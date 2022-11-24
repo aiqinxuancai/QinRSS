@@ -4,5 +4,7 @@
   "GroupAdmins": [ 123456, 123456 ],
   "GuildAdmins": [ "123465", "123456" ],
   "NotSentAfterLongOffline": false,
-  "RunInterval": 120
+  "RunInterval": 120,
+  "SelfDownloadedImages": false,
+  "ImageProxy": ""
 }

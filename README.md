@@ -6,12 +6,14 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 
 ```json
 {
-    "WebSocketLocation": "ws://127.0.0.1:1868",
-    "RSSHubUrl": "https://rsshub.app",
-    "GroupAdmins": [123456, 123456],
-    "GuildAdmins": ["123465", "123456"],
-    "NotSentAfterLongOffline": false,
-    "RunInterval": 120
+  "WebSocketLocation": "ws://127.0.0.1:1868",
+  "RSSHubUrl": "https://rsshub.app",
+  "GroupAdmins": [ 123456, 123456 ],
+  "GuildAdmins": [ "123465", "123456" ],
+  "NotSentAfterLongOffline": false,
+  "RunInterval": 120,
+  "SelfDownloadedImages": false,
+  "ImageProxy": ""
 }
 ```
 
@@ -21,6 +23,8 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 * **GuildAdmins** QQ频道管理员ID
 * **NotSentAfterLongOffline** 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
 * **RunInterval** 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
+* **SelfDownloadedImages** 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
+* **ImageProxy** 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080，仅在SelfDownloadedImages设置为true时可用
 
 
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe

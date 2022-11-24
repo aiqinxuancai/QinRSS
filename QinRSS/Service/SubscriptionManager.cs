@@ -8,6 +8,9 @@ using System.Text;
 using QinRSS.Service.Model;
 using QinRSS.Utils;
 using static System.Net.Mime.MediaTypeNames;
+using System.Reflection;
+using Flurl.Http;
+using System.Web;
 
 namespace QinRSS.Service
 {
@@ -260,14 +263,14 @@ namespace QinRSS.Service
         /// <param name="url"></param>
         /// <param name="imageUrls"></param>
         /// <returns></returns>
-        private async Task SendSubscription(string selfId, 
-            string guildId, 
-            string channelId, 
+        private async Task SendSubscription(string selfId,
+            string guildId,
+            string channelId,
             DateTime time,
             string title,
-            string content, 
-            string url, 
-            IEnumerable<string> imageUrls, 
+            string content,
+            string url,
+            IEnumerable<string> imageUrls,
             bool translate)
         {
             SimpleLogger.Instance.Info($"开始发送订阅{channelId}");
@@ -283,11 +286,8 @@ namespace QinRSS.Service
                 var translates = await TranslatorManager.Translater(content.Replace("※", ""));
                 if (translates != null)
                 {
-                    var translateContent = "";
-                    foreach (var item in translates)
-                    {
-                        translateContent += $"\n{item}";
-                    }
+                    var translateContent = translates;
+
                     sendText += $"{title}\n原文：\n{content}\n译文：\n{translateContent}\n";
                 }
                 else
@@ -303,12 +303,21 @@ namespace QinRSS.Service
             //图片CQ码
             foreach (var imageUrl in imageUrls)
             {
+                //图片下载逻辑，图片使用代理下载逻辑
+                //imageUrl.DownloadFileAsync(AppContext.BaseDirectory)
                 sendText += $"\n[CQ:image,file={imageUrl}]";
             }
 
-            sendText += $"更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
+            sendText += $"\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
 
-            Console.WriteLine(sendText);
+            SimpleLogger.Instance.Error($"发送订阅：{selfId}, {channelId}, {sendText}");
+            sendText = HttpUtility.HtmlDecode(sendText);
+
+            if (AppConfig.Data.SelfDownloadedImages)
+            {
+                sendText = await DownloadHelper.MessageImageUrlToBase64(sendText);
+            }
+            
 
             if (string.IsNullOrEmpty(guildId))
             {

@@ -129,7 +129,7 @@ namespace QinRSS.Service
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static async Task<string[]> Translater(string s)
+        public static async Task<string> Translater(string s)
         {
             List<string> list = new List<string>();
 
@@ -139,7 +139,7 @@ namespace QinRSS.Service
                 var ret = await Translater(s, j.Item1, j.Item2);
 
 
-                list.Add(CaiyunDecode(ret.Target));
+                return CaiyunDecode(ret.Target);
        
 
             }
@@ -149,7 +149,7 @@ namespace QinRSS.Service
             
             }
 
-            return list.ToArray();
+            return string.Empty;
         }
 
     }
