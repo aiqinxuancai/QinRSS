@@ -4,28 +4,32 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 ### 部署方法
 下载对应系统的程序包，编辑Config.json文件，
 
-```json
-{
-  "WebSocketLocation": "ws://127.0.0.1:1868",
-  "RSSHubUrl": "https://rsshub.app",
-  "GroupAdmins": [ 123456, 123456 ],
-  "GuildAdmins": [ "123465", "123456" ],
-  "NotSentAfterLongOffline": false,
-  "RunInterval": 120,
-  "SelfDownloadImage": false,
-  "ImageProxy": ""
-}
+```yml
+# 监听的ws地址
+webSocketLocation: 'ws://127.0.0.1:1868'
+
+# RSSHub站点地址，可自行寻找、搭建替换
+rSSHubUrl: 'https://rsshub.app'
+
+# QQ群管理员ID
+groupAdmins: [123456, 123456]
+
+# QQ频道管理员ID
+guildAdmins: ['123465', '123456']
+
+# 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
+notSentAfterLongOffline: false
+
+# 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
+runInterval: 120
+
+# 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
+selfDownloadImage: false
+
+# ImageProxy 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080 ，仅在SelfDownloadImage设置为true时可用
+imageProxy: ''
+
 ```
-
-* **WebSocketLocation** 监听的ws地址
-* **RSSHubUrl** RSSHub站点地址，可自行寻找、搭建替换
-* **GroupAdmins** QQ群管理员ID
-* **GuildAdmins** QQ频道管理员ID
-* **NotSentAfterLongOffline** 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
-* **RunInterval** 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
-* **SelfDownloadImage** 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
-* **ImageProxy** 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080 ，仅在SelfDownloadImage设置为true时可用
-
 
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe
 
