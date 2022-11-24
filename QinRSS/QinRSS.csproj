@@ -21,9 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Config.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
