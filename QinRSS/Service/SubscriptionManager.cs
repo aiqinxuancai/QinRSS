@@ -313,7 +313,7 @@ namespace QinRSS.Service
             SimpleLogger.Instance.Error($"发送订阅：{selfId}, {channelId}, {sendText}");
             sendText = HttpUtility.HtmlDecode(sendText);
 
-            if (AppConfig.Data.SelfDownloadedImages)
+            if (AppConfig.Data.SelfDownloadImage)
             {
                 sendText = await DownloadHelper.MessageImageUrlToBase64(sendText);
             }
