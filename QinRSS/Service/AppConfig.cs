@@ -18,6 +18,7 @@ namespace QinRSS.Service
         /// <summary>
         /// RSSHUB站点地址 如"https://rsshub.app"
         /// </summary>
+        [YamlMember(Alias = "rssHubUrl", ApplyNamingConventions = false)]
         public string RSSHubUrl { get; set; } = string.Empty;
 
         /// <summary>
