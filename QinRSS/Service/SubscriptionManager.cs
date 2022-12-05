@@ -57,8 +57,9 @@ namespace QinRSS.Service
                 _tokenSource.Cancel();
             }
 
-            _tokenSource = new CancellationTokenSource();
-            Task.Run(() => TimerFunc(_tokenSource.Token), _tokenSource.Token);
+            var tokenSource = new CancellationTokenSource();
+            _tokenSource = tokenSource;
+            Task.Run(() => TimerFunc(tokenSource.Token), tokenSource.Token);
         }
 
         public void Stop()
@@ -77,7 +78,7 @@ namespace QinRSS.Service
             while (true)
             {
                 SimpleLogger.Instance.Info($"TimerFunc订阅");
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken?.IsCancellationRequested)
                 {
                     return;
                 }
