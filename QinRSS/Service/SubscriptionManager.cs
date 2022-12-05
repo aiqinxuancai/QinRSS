@@ -59,7 +59,7 @@ namespace QinRSS.Service
 
             var tokenSource = new CancellationTokenSource();
             _tokenSource = tokenSource;
-            Task.Run(() => TimerFunc(tokenSource.Token), tokenSource.Token);
+            Task.Run(() => TimerFunc(tokenSource.Token));
         }
 
         public void Stop()
