@@ -214,6 +214,11 @@ namespace QinRSS.Service
                         //var images = doc.DocumentNode.SelectNodes("/img");
                         var imageUrls = GetImageUrl(doc);
 
+                        if (subscription.AlreadyAddedDownloadModel.Count == 0)
+                        {
+                            dontSend = true;
+                        }
+
                         //如果没有加入过
                         if (!subscription.AlreadyAddedDownloadModel.Any(a => a.Url.Contains(itemUrl)))
                         {
@@ -376,25 +381,42 @@ namespace QinRSS.Service
 
         public void Load()
         {
-            string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json"); 
-            Debug.WriteLine($"准备载入{fileName}");
-            if (File.Exists(fileName))
+            lock (_lock)
             {
-                _subscriptionModel.Clear();
-                List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileName));
+                string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
+                SimpleLogger.Instance.Error($"准备载入{fileName}");
+                if (File.Exists(fileName))
+                {
+                    try
+                    {
+                        _subscriptionModel.Clear();
+                        List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileName));
 
 
-                _subscriptionModel = subscriptionModel;
+                        _subscriptionModel = subscriptionModel;
+                    }
+                    catch (Exception ex)
+                    {
+                        SimpleLogger.Instance.Error($"载入失败");
+                    }
+
+
+                }
+
             }
         }
 
 
         public void Save()
         {
-            Debug.WriteLine("保存订阅");
-            string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
-            var content = JsonConvert.SerializeObject(_subscriptionModel);
-            File.WriteAllText(fileName, content);
+            lock (_lock)
+            {
+                Debug.WriteLine("保存订阅");
+                string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
+                var content = JsonConvert.SerializeObject(_subscriptionModel);
+                File.WriteAllText(fileName, content);
+            }
+
         }
 
         //存储订阅，读取加载订阅
