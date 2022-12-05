@@ -72,13 +72,14 @@ namespace QinRSS.Service
 
         private void TimerFunc(CancellationToken cancellationToken)
         {
+            var c = cancellationToken;
             //首次启动10秒后进行第一次检查
-            TaskHelper.Sleep(1000 * 10, 100, cancellationToken);
+            TaskHelper.Sleep(1000 * 10, 100, c);
 
             while (true)
             {
                 SimpleLogger.Instance.Info($"TimerFunc订阅");
-                if (cancellationToken?.IsCancellationRequested)
+                if (c.IsCancellationRequested)
                 {
                     return;
                 }
