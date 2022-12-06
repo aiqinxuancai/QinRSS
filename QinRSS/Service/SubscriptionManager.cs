@@ -192,11 +192,9 @@ namespace QinRSS.Service
                     subscription.TaskFullCount = feed.Items.Count();
                     subscription.Name = feed.Title.Text;
 
-        
-
                     SimpleLogger.Instance.Info($"获得订阅标题：{subscription.Name} 订阅总任务数：{subscription.TaskFullCount}");
 
-                    foreach (SyndicationItem item in feed.Items)
+                    foreach (SyndicationItem item in feed.Items.Reverse())
                     {
                         string subject = item.Title.Text; // 摘要
                         string summary = item.Summary.Text; //完整 HTML格式
@@ -243,6 +241,8 @@ namespace QinRSS.Service
                                         itemUrl, 
                                         imageUrls,
                                         subscription.Translate).Wait();
+
+                                    Thread.Sleep(1000);
                                 }
 
                             }
