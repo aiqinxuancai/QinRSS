@@ -253,7 +253,7 @@ namespace QinRSS.Service
 
                         }
                     }
-                    Save();
+                    //Save();
                 }
             }
         }
