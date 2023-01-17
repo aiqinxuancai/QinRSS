@@ -515,6 +515,7 @@ namespace QinRSS.Service
             }
             list.Add(model);
             Save();
+            SaveCache();
             Task.Run(() => {
                 CheckSubscription(oneBotRSSModel, true);
             });
@@ -548,6 +549,7 @@ namespace QinRSS.Service
             }
 
             Save();
+            SaveCache();
         }
 
 
@@ -576,6 +578,7 @@ namespace QinRSS.Service
             }
 
             Save();
+            SaveCache();
         }
 
 
