@@ -1,4 +1,6 @@
-﻿using QinRSS.Service;
+﻿using Newtonsoft.Json;
+using QinRSS.Service;
+using QinRSS.Service.Model;
 using System;
 
 
@@ -6,6 +8,13 @@ namespace MyApp // Note: actual namespace depends on the project name.
 {
     internal class Program
     {
+        class TESTD
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+
         static void Main(string[] args)
         {
             MainAsync().GetAwaiter().GetResult();
@@ -13,6 +22,23 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
         static async Task MainAsync()
         {
+
+#if DEBUG
+
+            List<TESTD> t = new List<TESTD>();
+            t.Add(new TESTD() { Id = 1, Name = "1" });
+            t.Add(new TESTD() { Id = 2, Name = "2" });
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.ContractResolver = new SubscriptionJsonContractResolver { includeClearTask = true };
+
+            var content = JsonConvert.SerializeObject(t, settings);
+
+            Console.WriteLine(content);
+
+#endif
+
+
             //基础检查
             if (!File.Exists(AppConfig.ConfigPath))
             {

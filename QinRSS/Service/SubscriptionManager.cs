@@ -33,6 +33,7 @@ namespace QinRSS.Service
         public List<OneBotRSSModel> SubscriptionModel => _subscriptionModel;
 
         private List<OneBotRSSModel> _subscriptionModel { get; set; } = new List<OneBotRSSModel>();
+        
 
         private object _lock = new object();
 
@@ -254,6 +255,7 @@ namespace QinRSS.Service
                         }
                     }
                     //Save();
+                    SaveCache();
                 }
             }
         }
@@ -383,26 +385,47 @@ namespace QinRSS.Service
         {
             lock (_lock)
             {
-                string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
-                SimpleLogger.Instance.Error($"准备载入{fileName}");
-                if (File.Exists(fileName))
+
+                //还原列表
+                string fileNameCache = Path.Combine(AppContext.BaseDirectory, "SubscriptionCache.json");
+                bool loadCacheError = false;
+               
+                if (File.Exists(fileNameCache))
                 {
+                    SimpleLogger.Instance.Error($"准备载入带有已发送数据的缓存 {fileNameCache}");
                     try
                     {
                         _subscriptionModel.Clear();
-                        List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileName));
-
-
+                        List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileNameCache));
+                        //如果载入失败，则还是有Subscription活着
                         _subscriptionModel = subscriptionModel;
                     }
                     catch (Exception ex)
                     {
-                        SimpleLogger.Instance.Error($"载入失败");
+                        SimpleLogger.Instance.Error($"载入失败#2");
+                        loadCacheError = true;
                     }
-
-
                 }
 
+                if (loadCacheError)
+                {
+                    string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
+                    SimpleLogger.Instance.Error($"准备载入{fileName}");
+                    if (File.Exists(fileName))
+                    {
+                        try
+                        {
+                            List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileName));
+                            _subscriptionModel = subscriptionModel;
+                        }
+                        catch (Exception ex)
+                        {
+                            SimpleLogger.Instance.Error($"载入失败#1");
+                        }
+
+
+                    }
+                }
             }
         }
 
@@ -413,7 +436,28 @@ namespace QinRSS.Service
             {
                 Debug.WriteLine("保存订阅");
                 string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
-                var content = JsonConvert.SerializeObject(_subscriptionModel);
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.ContractResolver = new SubscriptionJsonContractResolver { includeClearTask = false };
+                string content = JsonConvert.SerializeObject(_subscriptionModel, settings);
+ 
+                File.WriteAllText(fileName, content);
+            }
+
+        }
+
+        
+        public void SaveCache()
+        {
+            lock (_lock)
+            {
+                Debug.WriteLine("保存订阅SaveSubList");
+                string fileName = Path.Combine(AppContext.BaseDirectory, "SubscriptionCache.json");
+
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.ContractResolver = new SubscriptionJsonContractResolver { includeClearTask = true };
+                string content = JsonConvert.SerializeObject(_subscriptionModel, settings);
+
+
                 File.WriteAllText(fileName, content);
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,4 +17,5 @@ namespace QinRSS.Service.Model
         public List<SubscriptionItemModel> AllSubscription { set; get; } = new List<SubscriptionItemModel>();
        
     }
+
 }

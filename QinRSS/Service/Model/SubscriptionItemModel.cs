@@ -60,7 +60,7 @@ namespace QinRSS.Service.Model
         /// <summary>
         /// 已经发送过的
         /// </summary>
-        [JsonIgnore]
+        //[JsonIgnore]
         [JsonProperty("AlreadyAddedDownloadModel")]
         public List<SubscriptionSubTaskModel> AlreadyAddedDownloadModel { get; set; } = new List<SubscriptionSubTaskModel> { };
     }
