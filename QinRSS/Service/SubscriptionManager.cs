@@ -392,7 +392,7 @@ namespace QinRSS.Service
                
                 if (File.Exists(fileNameCache))
                 {
-                    SimpleLogger.Instance.Error($"准备载入带有已发送数据的缓存 {fileNameCache}");
+                    SimpleLogger.Instance.Info($"准备载入带有已发送数据的缓存 {fileNameCache}");
                     try
                     {
                         _subscriptionModel.Clear();
@@ -405,12 +405,16 @@ namespace QinRSS.Service
                         SimpleLogger.Instance.Error($"载入失败#2");
                         loadCacheError = true;
                     }
+                } 
+                else
+                {
+                    loadCacheError = true; //文件不存在也算失败
                 }
 
                 if (loadCacheError)
                 {
                     string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
-                    SimpleLogger.Instance.Error($"准备载入{fileName}");
+                    SimpleLogger.Instance.Info($"准备载入{fileName}");
                     if (File.Exists(fileName))
                     {
                         try
