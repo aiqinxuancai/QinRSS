@@ -399,6 +399,11 @@ namespace QinRSS.Service
                         List<OneBotRSSModel> subscriptionModel = JsonConvert.DeserializeObject<List<OneBotRSSModel>>(File.ReadAllText(fileNameCache));
                         //如果载入失败，则还是有Subscription活着
                         _subscriptionModel = subscriptionModel;
+
+                        if (_subscriptionModel == null)
+                        {
+                            loadCacheError = true;
+                        }
                     }
                     catch (Exception ex)
                     {
