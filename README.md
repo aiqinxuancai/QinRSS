@@ -52,6 +52,7 @@ openAIProxy: ''
 #add [自定义名称] [订阅地址如"twitter/user/TOUKEN_STAFF"]
 ```
 可在尾部附加参数为 --translate 发送翻译到中文后的内容
+
 可在尾部附加参数为 --translateOnly仅发送翻译到中文后的内容，忽略原文
 
 #### 删除订阅
