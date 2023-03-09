@@ -294,8 +294,8 @@ namespace QinRSS.Service
 
             if (translate)
             {
-                var translates = await TranslatorManager.Translater(content.Replace("※", ""));
-                if (translates != null)
+                var translates = await TranslatorManager.Translater(content);
+                if (!string.IsNullOrWhiteSpace(translates))
                 {
                     var translateContent = translates;
 
@@ -487,7 +487,7 @@ namespace QinRSS.Service
 
         //存储订阅，读取加载订阅
 
-        public bool Add(string selfId, string guildId, string channelId, string name, string url, bool translate)
+        public bool Add(string selfId, string guildId, string channelId, string name, string url, bool translate, bool translateOnly)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -524,6 +524,7 @@ namespace QinRSS.Service
             model.GroupOrChannelId = channelId;
             model.GuildId = guildId;
             model.Translate = translate;
+            model.TranslateOnly = translateOnly;
 
             SimpleLogger.Instance.Error($"添加订阅：{model.Url}");
 

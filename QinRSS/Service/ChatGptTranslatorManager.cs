@@ -25,6 +25,9 @@ namespace QinRSS.Service
 
         const string kSystemMessage = "你将作为翻译官，我接下来会发送给你格式为[文本]的内容，你只需要将其中的文本翻译为中文发送给我就可以了";
 
+
+        static Dictionary<string, string> _cache = new Dictionary<string, string>();
+
         static ChatGPTTranslatorManager()
         {
             if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
@@ -48,10 +51,19 @@ namespace QinRSS.Service
                 {
                     s = $"[{s}]";
 
+                    if (_cache.TryGetValue(s, out var r))
+                    {
+                        return r;
+                    }
+
+
                     var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId, ChatGPTSharp.Model.SendSystemType.Custom, kSystemMessage);
 
                     _lastParentMessageId = result.ConversationId;
                     _lastConversationId = result.MessageId;
+
+
+                    _cache[s] = string.IsNullOrEmpty(result.Response) ? "" : result.Response;
 
                     return result.Response;
 
