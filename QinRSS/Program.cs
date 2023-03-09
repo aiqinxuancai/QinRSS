@@ -36,6 +36,9 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
             Console.WriteLine(content);
 
+
+            var r = await ChatGPTTranslatorManager.Translater("[(1/5)【景趣「二十四節気　清明・雛芥子」登場】清明の季節の収穫物を集めて交換できる景趣「二十四節気　清明・雛芥子(にじゅうしせっき　せいめい・ひなげし)」が登場します。＜実施期間＞2023年3月7日(火)メンテナンス終了時～2023年6月6日(火)メンテナンス開始前#刀剣乱舞 #とうらぶ https://t.co/QjsEoFJ9NA]");
+            Console.WriteLine(r);
 #endif
 
 

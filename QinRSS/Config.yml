@@ -22,3 +22,8 @@ selfDownloadImage: false
 # ImageProxy 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080 ，仅在SelfDownloadImage设置为true时可用
 imageProxy: ''
 
+# OpenAI-Key，用于翻译内容时调用OpenAI
+openAIKey: ''
+
+# 用于无法连接OpenAI的情况
+openAIProxy: ''

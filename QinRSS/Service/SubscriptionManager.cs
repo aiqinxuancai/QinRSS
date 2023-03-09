@@ -241,7 +241,8 @@ namespace QinRSS.Service
                                         iStr, 
                                         itemUrl, 
                                         imageUrls,
-                                        subscription.Translate).Wait();
+                                        subscription.Translate,
+                                        subscription.TranslateOnly).Wait();
 
                                     Thread.Sleep(1000);
                                 }
@@ -280,7 +281,8 @@ namespace QinRSS.Service
             string content,
             string url,
             IEnumerable<string> imageUrls,
-            bool translate)
+            bool translate,
+            bool translateOnly)
         {
             SimpleLogger.Instance.Info($"开始发送订阅{channelId}");
             SimpleLogger.Instance.Info($"{time} {url}");
@@ -297,7 +299,16 @@ namespace QinRSS.Service
                 {
                     var translateContent = translates;
 
-                    sendText += $"{title}\n原文：\n{content}\n译文：\n{translateContent}\n";
+                    if (translateOnly)
+                    {
+                        sendText += $"{title}\n译文：{translateContent}\n";
+                    }
+                    else
+                    {
+                        sendText += $"{title}\n原文：\n{content}\n译文：\n{translateContent}\n";
+                    }
+
+                   
                 }
                 else
                 {

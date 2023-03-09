@@ -276,8 +276,9 @@ namespace QinRSS.Service
                             {
                                 //翻译内容
                                 bool translate = args.Any(a => a == "--translate");
+                                bool translateOnly = args.Any(a => a == "--translateOnly");
 
-                                if (SubscriptionManager.Instance.Add(selfId, guildId, groupOrchannelId, args[1], args[2], translate))
+                                if (SubscriptionManager.Instance.Add(selfId, guildId, groupOrchannelId, args[1], args[2], translate, translateOnly))
                                 {
                                     returnString = $"已添加订阅{args[1]}";
                                 }

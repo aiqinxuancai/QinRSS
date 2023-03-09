@@ -38,9 +38,18 @@ namespace QinRSS.Service.Model
         [JsonProperty("GuildId")] 
         public string GuildId { get; set; }
 
-
+        /// <summary>
+        /// 使用翻译
+        /// </summary>
         [JsonProperty("Translate")]
         public bool Translate { get; set; }
+
+
+        /// <summary>
+        /// 不保留原文，只使用翻译
+        /// </summary>
+        [JsonProperty("TranslateOnly")]
+        public bool TranslateOnly { get; set; }
 
         [JsonProperty("SubscriptionType")]
         public SubscriptionType SubscriptionType { get; set; }

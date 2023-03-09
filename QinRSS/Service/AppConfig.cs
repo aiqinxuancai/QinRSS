@@ -51,6 +51,20 @@ namespace QinRSS.Service
         /// 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080，仅在SelfDownloadImage设置为true时可用
         /// </summary>
         public string ImageProxy { get; set; } = string.Empty;
+
+        /// <summary>
+        /// OpenAI-Key，用于翻译内容时调用OpenAI
+        /// </summary>
+        [YamlMember(Alias = "openAIKey", ApplyNamingConventions = false)]
+        public string OpenAIKey { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 用于无法连接OpenAI的情况
+        /// </summary>
+        [YamlMember(Alias = "openAIProxy", ApplyNamingConventions = false)]
+        public string OpenAIProxy { get; set; } = string.Empty;
+
+        
     }
 
     /// <summary>
