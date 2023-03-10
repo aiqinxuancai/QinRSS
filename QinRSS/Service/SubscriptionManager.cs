@@ -294,7 +294,7 @@ namespace QinRSS.Service
 
             if (translate)
             {
-                var translates = await TranslatorManager.Translater(content);
+                var translates = await ChatGPTTranslatorManager.Translater(content);
                 if (!string.IsNullOrWhiteSpace(translates))
                 {
                     var translateContent = translates;
