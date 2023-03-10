@@ -1,5 +1,6 @@
 # QinRSS
 QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSHub站点获取内容并发送到QQ群或QQ频道中。已在go-cqhttp的rc3中进行测试通过。
+已支持使用ChatGPT翻译内容发送。
 
 ### 部署方法
 下载对应系统的程序包，编辑Config.yml文件，
@@ -29,6 +30,11 @@ selfDownloadImage: false
 # ImageProxy 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080 ，仅在SelfDownloadImage设置为true时可用
 imageProxy: ''
 
+# OpenAI-Key，用于翻译内容时调用OpenAI
+openAIKey: ''
+
+# 用于无法连接OpenAI的情况
+openAIProxy: ''
 ```
 
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe
@@ -46,6 +52,8 @@ imageProxy: ''
 #add [自定义名称] [订阅地址如"twitter/user/TOUKEN_STAFF"]
 ```
 可在尾部附加参数为 --translate 发送翻译到中文后的内容
+
+可在尾部附加参数为 --translateOnly仅发送翻译到中文后的内容，忽略原文
 
 #### 删除订阅
 ```
