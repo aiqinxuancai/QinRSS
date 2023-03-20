@@ -64,7 +64,14 @@ namespace QinRSS.Service
         [YamlMember(Alias = "openAIProxy", ApplyNamingConventions = false)]
         public string OpenAIProxy { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 用于无法连接OpenAI的情况，架设的反代地址，有了反代就不建议设置openAIProxy了
+        /// </summary>
+        [YamlMember(Alias = "openAIAPIBaseUri", ApplyNamingConventions = false)]
+        public string OpenAIAPIBaseUri { get; set; } = string.Empty;
         
+
+
     }
 
     /// <summary>
