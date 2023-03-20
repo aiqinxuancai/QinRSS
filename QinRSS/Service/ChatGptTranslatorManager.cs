@@ -32,9 +32,8 @@ namespace QinRSS.Service
         {
             if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
             {
-                _client = new ChatGPTClient(AppConfig.Data.OpenAIKey, proxyUri: AppConfig.Data.OpenAIProxy);
+                _client = new ChatGPTClient(AppConfig.Data.OpenAIKey, proxyUri: AppConfig.Data.OpenAIProxy, timeoutSeconds: 60);
             }
-            
         }
 
         /// <summary>
