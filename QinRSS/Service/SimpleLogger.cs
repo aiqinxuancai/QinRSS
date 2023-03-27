@@ -14,13 +14,19 @@ namespace QinRSS.Service
         private readonly string logFilename;
 
 
-        public readonly static SimpleLogger Instance = new SimpleLogger();
+        // 使用 Lazy<T> 类型实现延迟初始化
+        private static readonly Lazy<SimpleLogger> lazy =
+            new Lazy<SimpleLogger>(() => new SimpleLogger());
+
+
+        // 公开静态属性，返回单例对象
+        public static SimpleLogger Instance => lazy.Value;
 
         /// <summary>
         /// Initiate an instance of SimpleLogger class constructor.
         /// If log file does not exist, it will be created automatically.
         /// </summary>
-        public SimpleLogger()
+        private SimpleLogger()
         {
             datetimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
