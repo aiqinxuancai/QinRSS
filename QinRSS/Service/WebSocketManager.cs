@@ -47,7 +47,7 @@ namespace QinRSS.Service
 
                     if (!string.IsNullOrEmpty(echo.Value?.ToString()))
                     {
-                        Console.WriteLine(message);
+                        //Console.WriteLine(message);
                         _messageEcho[echo.Value?.ToString()] = message;
                     }
 
@@ -83,9 +83,9 @@ namespace QinRSS.Service
             var subType = node.FirstOrDefault(a => a.Key == "sub_type");
 
 
-            Console.WriteLine(message);
-            Console.WriteLine(messageType.Value?.ToString());
-            Console.WriteLine(subType.Value?.ToString());
+            //Console.WriteLine(message);
+            //Console.WriteLine(messageType.Value?.ToString());
+            //Console.WriteLine(subType.Value?.ToString());
 
             var messageTypeStr = messageType.Value?.ToString();
 
