@@ -23,7 +23,7 @@ namespace QinRSS.Service
         static string _lastParentMessageId = string.Empty;
 
 
-        const string kSystemMessage = "你将作为翻译官，我接下来会发送给你格式为[文本]的内容，你只需要将其中的文本翻译为中文发送给我就可以了";
+        const string kSystemMessage = "你将作为翻译官，请把以下内容翻译为中文，不要添加解释：\n";
 
 
         static Dictionary<string, string> _cache = new Dictionary<string, string>();
@@ -53,7 +53,7 @@ namespace QinRSS.Service
             {
                 try
                 {
-                    s = $"[{s}]";
+                    s = $"{kSystemMessage}{s}";
 
                     if (_cache.TryGetValue(s, out var r))
                     {
@@ -61,7 +61,7 @@ namespace QinRSS.Service
                     }
 
 
-                    var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId, ChatGPTSharp.Model.SendSystemType.Custom, kSystemMessage);
+                    var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId, ChatGPTSharp.Model.SendSystemType.None);
 
                     _lastParentMessageId = result.ConversationId;
                     _lastConversationId = result.MessageId;
