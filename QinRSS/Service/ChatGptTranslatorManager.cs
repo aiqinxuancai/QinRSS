@@ -23,7 +23,7 @@ namespace QinRSS.Service
         static string _lastParentMessageId = string.Empty;
 
 
-        const string kSystemMessage = "你将作为翻译官，请把以下内容翻译为中文，不要添加解释：\n";
+        const string kSystemMessage = "请把以下内容翻译为简体中文，不要解释：\n";
 
 
         static Dictionary<string, string> _cache = new Dictionary<string, string>();
