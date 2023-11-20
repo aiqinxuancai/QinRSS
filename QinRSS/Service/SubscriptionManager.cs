@@ -11,6 +11,10 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using Flurl.Http;
 using System.Web;
+using NitterAPI.Services;
+using System.Text.Json.Nodes;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace QinRSS.Service
 {
@@ -138,6 +142,39 @@ namespace QinRSS.Service
                 return "";
             }
         }
+        static object ConvertJsonElementToObject(JsonElement element)
+        {
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return element.GetString();
+                case JsonValueKind.Number:
+                    if (element.TryGetInt32(out int intValue))
+                        return intValue;
+                    else if (element.TryGetDouble(out double doubleValue))
+                        return doubleValue;
+                    else
+                        throw new NotSupportedException("Unhandled number type");
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return element.GetBoolean();
+                case JsonValueKind.Array:
+                    return element.EnumerateArray()
+                        .Select(ConvertJsonElementToObject)
+                        .ToList();
+                case JsonValueKind.Object:
+                    var dictionary = new Dictionary<string, object>();
+                    foreach (var property in element.EnumerateObject())
+                    {
+                        dictionary[property.Name] = ConvertJsonElementToObject(property.Value);
+                    }
+                    return dictionary;
+                case JsonValueKind.Null:
+                    return null;
+                default:
+                    throw new NotSupportedException($"Value kind '{element.ValueKind}' is not supported.");
+            }
+        }
 
         /// <summary>
         /// 检查一次订阅
@@ -159,102 +196,160 @@ namespace QinRSS.Service
                     {
                         //拼接URL "https://rsshub.uneasy.win" 
                         url = UrlHelper.CombineUriToString(AppConfig.Data.RSSHubUrl, url); ;
+                        SimpleLogger.Instance.Info($"检查订阅地址：{url}");
                     }
 
-
-                    SimpleLogger.Instance.Info($"检查订阅地址：{url}");
-
-                    XmlReader reader;
-                    SyndicationFeed feed;
-
-                    if (urlCache.ContainsKey(url))
+                    //NitterManager
+                    if (url.Contains("/twitter/"))
                     {
-                        //从缓存取
-                        feed = urlCache[url];
-                    }
-                    else
-                    {
+                        string username = url.Substring(url.LastIndexOf('/') + 1); // 获取用户名
+                        List<Tweet> tweets;
+
                         try
                         {
-                            reader = XmlReader.Create(url);
-                            feed = SyndicationFeed.Load(reader);
-                            reader.Close();
-                            urlCache.Add(url, feed);
+                            var ja =  NitterManager.GetNitter(username); // 从 NitterManager 获取推文
+                            tweets = System.Text.Json.JsonSerializer.Deserialize<List<Tweet>>(ja.ToString());
+                            tweets = tweets
+                               .OrderBy(tweet => tweet.time)
+                               .ToList();
                         }
                         catch (Exception e)
                         {
-                            SimpleLogger.Instance.Error($"无法访问订阅：{url}");
+                            SimpleLogger.Instance.Error($"无法获取 {username} 的推文");
                             continue;
                         }
-                    }
 
-
-
-                    subscription.TaskFullCount = feed.Items.Count();
-                    subscription.Name = feed.Title.Text;
-
-                    SimpleLogger.Instance.Info($"获得订阅标题：{subscription.Name} 订阅总任务数：{subscription.TaskFullCount}");
-
-                    foreach (SyndicationItem item in feed.Items.Reverse())
-                    {
-                        string subject = item.Title.Text; // 摘要
-                        string summary = item.Summary.Text; //完整 HTML格式
-
-                        string itemUrl = item.Links?.FirstOrDefault().Uri.ToString();
-
-                        var dateTime = item.PublishDate.ToLocalTime().DateTime;
-
-
-                        var doc = new HtmlDocument();
-                        doc.LoadHtml(summary);
-
-                        string iStr = doc.DocumentNode.InnerText;
-
-                        //var images = doc.DocumentNode.SelectNodes("/img");
-                        var imageUrls = GetImageUrl(doc);
-
-                        if (subscription.AlreadyAddedDownloadModel.Count == 0)
+                        foreach (Tweet tweet in tweets)
                         {
-                            dontSend = true;
-                        }
+                            string subject = tweet.content; // 摘要
+                            string itemUrl = "https://nitter.net" + tweet.link;
 
-                        //如果没有加入过
-                        if (!subscription.AlreadyAddedDownloadModel.Any(a => a.Url.Contains(itemUrl)))
-                        {
-                            try
+                            var dateTime = tweet.time;
+
+                            if (!subscription.AlreadyAddedDownloadModel.Any(a => a.Url.Contains(itemUrl)))
                             {
-                                if (dontSend)
-                                {
-                                    //不发送
-                                    subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
-                                }
-                                else
+                                try
                                 {
                                     subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
 
                                     //发送订阅
-                                    SendSubscription(model.SelfId, 
-                                        subscription.GuildId, 
-                                        subscription.GroupOrChannelId, 
-                                        dateTime, 
+                                    SendSubscription(model.SelfId,
+                                        subscription.GuildId,
+                                        subscription.GroupOrChannelId,
+                                        dateTime,
                                         subscription.Name,
-                                        iStr, 
-                                        itemUrl, 
-                                        imageUrls,
+                                        subject,
+                                        itemUrl,
+                                        tweet.images,
                                         subscription.Translate,
                                         subscription.TranslateOnly).Wait();
 
                                     Thread.Sleep(1000);
                                 }
-
+                                catch (Exception ex)
+                                {
+                                    SimpleLogger.Instance.Error(ex.ToString());
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                SimpleLogger.Instance.Error(ex.ToString());
-                            }
-
                         }
                     }
+                    else
+                    {
+                        XmlReader reader;
+                        SyndicationFeed feed;
+
+                        if (urlCache.ContainsKey(url))
+                        {
+                            feed = urlCache[url];
+                        }
+                        else
+                        {
+                            try
+                            {
+                                reader = XmlReader.Create(url);
+                                feed = SyndicationFeed.Load(reader);
+                                reader.Close();
+                                urlCache.Add(url, feed);
+                            }
+                            catch (Exception e)
+                            {
+                                SimpleLogger.Instance.Error($"无法访问订阅：{url}");
+                                continue;
+                            }
+                        }
+
+
+
+                        subscription.TaskFullCount = feed.Items.Count();
+                        subscription.Name = feed.Title.Text;
+
+                        SimpleLogger.Instance.Info($"获得订阅标题：{subscription.Name} 订阅总任务数：{subscription.TaskFullCount}");
+
+                        foreach (SyndicationItem item in feed.Items.Reverse())
+                        {
+                            string subject = item.Title.Text; // 摘要
+                            string summary = item.Summary.Text; //完整 HTML格式
+
+                            string itemUrl = item.Links?.FirstOrDefault().Uri.ToString();
+
+                            var dateTime = item.PublishDate.ToLocalTime().DateTime;
+
+
+                            var doc = new HtmlDocument();
+                            doc.LoadHtml(summary);
+
+                            string iStr = doc.DocumentNode.InnerText;
+
+                            var imageUrls = GetImageUrl(doc);
+
+                            if (subscription.AlreadyAddedDownloadModel.Count == 0)
+                            {
+                                dontSend = true;
+                            }
+
+                            //如果没有加入过
+                            if (!subscription.AlreadyAddedDownloadModel.Any(a => a.Url.Contains(itemUrl)))
+                            {
+                                try
+                                {
+                                    if (dontSend)
+                                    {
+                                        //不发送
+                                        subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
+                                    }
+                                    else
+                                    {
+                                        subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
+
+                                        //发送订阅
+                                        SendSubscription(model.SelfId,
+                                            subscription.GuildId,
+                                            subscription.GroupOrChannelId,
+                                            dateTime,
+                                            subscription.Name,
+                                            iStr,
+                                            itemUrl,
+                                            imageUrls,
+                                            subscription.Translate,
+                                            subscription.TranslateOnly).Wait();
+
+                                        Thread.Sleep(1000);
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    SimpleLogger.Instance.Error(ex.ToString());
+                                }
+
+                            }
+                        }
+                    }
+
+
+                   
+
+                    
                     //Save();
                     SaveCache();
                 }
@@ -321,12 +416,16 @@ namespace QinRSS.Service
             }
 
             //图片CQ码
-            foreach (var imageUrl in imageUrls)
+            if (imageUrls != null)
             {
-                //图片下载逻辑，图片使用代理下载逻辑
-                //imageUrl.DownloadFileAsync(AppContext.BaseDirectory)
-                sendText += $"\n[CQ:image,file={imageUrl}]";
+                foreach (var imageUrl in imageUrls)
+                {
+                    //图片下载逻辑，图片使用代理下载逻辑
+                    //imageUrl.DownloadFileAsync(AppContext.BaseDirectory)
+                    sendText += $"\n[CQ:image,file={imageUrl}]";
+                }
             }
+
 
             sendText += $"\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
 
