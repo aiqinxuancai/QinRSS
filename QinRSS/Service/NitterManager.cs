@@ -80,7 +80,7 @@ namespace NitterAPI.Services
                 var tweetContent = item.SelectSingleNode(".//div[@class='tweet-content media-body']").InnerText.Trim();
                 //Console.WriteLine("Tweet content: " + tweetContent);
 
-                json["contnent"] = tweetContent;
+                json["content"] = tweetContent;
 
 
                 // 提取attachment image中的a标签的图片URL

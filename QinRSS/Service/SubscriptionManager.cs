@@ -15,6 +15,7 @@ using NitterAPI.Services;
 using System.Text.Json.Nodes;
 using System.Collections.Generic;
 using System.Text.Json;
+using YamlDotNet.Core;
 
 namespace QinRSS.Service
 {
@@ -185,7 +186,7 @@ namespace QinRSS.Service
             {
                 //缓存，避免同一个URL多次请求
                 Dictionary<string, SyndicationFeed> urlCache = new Dictionary<string, SyndicationFeed>();
-
+                Dictionary<string, List<Tweet>> urlCacheNitter = new Dictionary<string, List<Tweet>>();
 
                 SimpleLogger.Instance.Info($"检查{model.SelfId}订阅...");
                 foreach (var subscription in model.AllSubscription)
@@ -200,20 +201,28 @@ namespace QinRSS.Service
                         string username = url.Substring(url.LastIndexOf('/') + 1); // 获取用户名
                         List<Tweet> tweets;
 
-                        try
+                        if (urlCacheNitter.ContainsKey(url))
                         {
-                            var ja =  NitterManager.GetNitter(username); // 从 NitterManager 获取推文
-                            tweets = System.Text.Json.JsonSerializer.Deserialize<List<Tweet>>(ja.ToString());
-                            tweets = tweets
-                               .OrderBy(tweet => tweet.time)
-                               .ToList();
+                            tweets = urlCacheNitter[url];
                         }
-                        catch (Exception e)
+                        else
                         {
-                            SimpleLogger.Instance.Error($"无法获取 {url}   {username}   的推文");
+                            try
+                            {
+                                var ja = NitterManager.GetNitter(username); // 从 NitterManager 获取推文
+                                tweets = System.Text.Json.JsonSerializer.Deserialize<List<Tweet>>(ja.ToString());
+                                tweets = tweets
+                                   .OrderBy(tweet => tweet.time)
+                                   .ToList();
+                                urlCacheNitter[url] = tweets;
+                            }
+                            catch (Exception e)
+                            {
+                                SimpleLogger.Instance.Error($"无法获取 {url}   {username}   的推文");
 
-                            Console.WriteLine(e);
-                            continue;
+                                Console.WriteLine(e);
+                                continue;
+                            }
                         }
 
                         foreach (Tweet tweet in tweets)
