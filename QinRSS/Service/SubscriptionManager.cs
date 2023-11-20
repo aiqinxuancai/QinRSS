@@ -192,15 +192,10 @@ namespace QinRSS.Service
                 {
                     string url = subscription.Url;
 
-                    if (!url.StartsWith("http"))
-                    {
-                        //拼接URL "https://rsshub.uneasy.win" 
-                        url = UrlHelper.CombineUriToString(AppConfig.Data.RSSHubUrl, url); ;
-                        SimpleLogger.Instance.Info($"检查订阅地址：{url}");
-                    }
+
 
                     //NitterManager
-                    if (url.Contains("/twitter/"))
+                    if (url.Contains("twitter/user"))
                     {
                         string username = url.Substring(url.LastIndexOf('/') + 1); // 获取用户名
                         List<Tweet> tweets;
@@ -215,14 +210,16 @@ namespace QinRSS.Service
                         }
                         catch (Exception e)
                         {
-                            SimpleLogger.Instance.Error($"无法获取 {username} 的推文");
+                            SimpleLogger.Instance.Error($"无法获取 {url}   {username}   的推文");
+
+                            Console.WriteLine(e);
                             continue;
                         }
 
                         foreach (Tweet tweet in tweets)
                         {
                             string subject = tweet.content; // 摘要
-                            string itemUrl = "https://nitter.net" + tweet.link;
+                            string itemUrl = "https://twitter.com" + tweet.link;
 
                             var dateTime = tweet.time;
 
@@ -255,6 +252,12 @@ namespace QinRSS.Service
                     }
                     else
                     {
+                        if (!url.StartsWith("http"))
+                        {
+                            //拼接URL "https://rsshub.uneasy.win" 
+                            url = UrlHelper.CombineUriToString(AppConfig.Data.RSSHubUrl, url); ;
+                            SimpleLogger.Instance.Info($"检查订阅地址：{url}");
+                        }
                         XmlReader reader;
                         SyndicationFeed feed;
 
