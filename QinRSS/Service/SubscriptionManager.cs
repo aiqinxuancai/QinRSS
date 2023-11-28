@@ -232,24 +232,34 @@ namespace QinRSS.Service
 
                             var dateTime = tweet.time;
 
+                            if (subscription.AlreadyAddedDownloadModel.Count == 0)
+                            {
+                                dontSend = true;
+                            }
+
                             if (!subscription.AlreadyAddedDownloadModel.Any(a => a.Url.Contains(itemUrl)))
                             {
                                 try
                                 {
                                     subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
 
-                                    //发送订阅
-                                    SendSubscription(model.SelfId,
-                                        subscription.GuildId,
-                                        subscription.GroupOrChannelId,
-                                        dateTime,
-                                        subscription.Name,
-                                        subject,
-                                        itemUrl,
-                                        tweet.images,
-                                        subscription.Translate,
-                                        subscription.TranslateOnly).Wait();
 
+                                    if (!dontSend)
+                                    {
+                                        if ((DateTime.Now - dateTime).Days <= 3)
+                                        {  //发送订阅
+                                            SendSubscription(model.SelfId,
+                                                subscription.GuildId,
+                                                subscription.GroupOrChannelId,
+                                                dateTime,
+                                                subscription.Name,
+                                                subject,
+                                                itemUrl,
+                                                tweet.images,
+                                                subscription.Translate,
+                                                subscription.TranslateOnly).Wait();
+                                        }
+                                    }
                                     Thread.Sleep(1000);
                                 }
                                 catch (Exception ex)
@@ -334,16 +344,21 @@ namespace QinRSS.Service
                                         subscription.AlreadyAddedDownloadModel.Add(new SubscriptionSubTaskModel() { Name = subject, Url = itemUrl });
 
                                         //发送订阅
-                                        SendSubscription(model.SelfId,
-                                            subscription.GuildId,
-                                            subscription.GroupOrChannelId,
-                                            dateTime,
-                                            subscription.Name,
-                                            iStr,
-                                            itemUrl,
-                                            imageUrls,
-                                            subscription.Translate,
-                                            subscription.TranslateOnly).Wait();
+
+                                        if ((DateTime.Now - dateTime).Days <= 3)
+                                        {
+                                            SendSubscription(model.SelfId,
+                                                subscription.GuildId,
+                                                subscription.GroupOrChannelId,
+                                                dateTime,
+                                                subscription.Name,
+                                                iStr,
+                                                itemUrl,
+                                                imageUrls,
+                                                subscription.Translate,
+                                                subscription.TranslateOnly).Wait();
+                                        }
+
 
                                         Thread.Sleep(1000);
                                     }
