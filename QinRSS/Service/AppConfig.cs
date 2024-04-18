@@ -32,9 +32,14 @@ namespace QinRSS.Service
         public string[] GuildAdmins { get; set; } = new string[0];
 
         /// <summary>
-        /// 离线大于1天后再上线，首次不发送订阅，避免出现消息轰炸
+        /// 离线大于1天后再上线，首次不发送订阅，避免出现消息轰炸(废弃)
         /// </summary>
         public bool NotSentAfterLongOffline { get; set; }
+
+        /// <summary>
+        /// 首次检测不发送，避免消息爆炸
+        /// </summary>
+        public bool FirstCheckDontSend { get; set; }
 
         /// <summary>
         /// 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置

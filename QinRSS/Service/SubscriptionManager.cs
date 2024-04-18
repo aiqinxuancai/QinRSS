@@ -82,6 +82,8 @@ namespace QinRSS.Service
             //首次启动10秒后进行第一次检查
             TaskHelper.Sleep(1000 * 10, 100, c);
 
+            uint runCount = 0;
+
             while (true)
             {
                 SimpleLogger.Instance.Info($"TimerFunc订阅");
@@ -93,10 +95,9 @@ namespace QinRSS.Service
                 {
                     foreach (var subscription in _subscriptionModel)
                     {
-                        if (AppCache.Data.LastSentTime != null && 
-                            (DateTime.Now - (DateTime)AppCache.Data.LastSentTime).TotalDays >= 1 &&
-                            AppConfig.Data.NotSentAfterLongOffline)
+                        if (runCount == 0 && AppConfig.Data.FirstCheckDontSend)
                         {
+                            SimpleLogger.Instance.Info($"首次订阅不发送");
                             CheckSubscription(subscription, true);
                         } 
                         else
@@ -188,7 +189,7 @@ namespace QinRSS.Service
                 Dictionary<string, SyndicationFeed> urlCache = new Dictionary<string, SyndicationFeed>();
                 Dictionary<string, List<Tweet>> urlCacheNitter = new Dictionary<string, List<Tweet>>();
 
-                SimpleLogger.Instance.Info($"检查{model.SelfId}订阅...");
+                SimpleLogger.Instance.Info($"检查{model.SelfId}订阅，是否不发送{dontSend}...");
                 foreach (var subscription in model.AllSubscription)
                 {
                     string url = subscription.Url;

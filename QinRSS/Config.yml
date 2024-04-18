@@ -10,8 +10,11 @@ groupAdmins: [123456, 123456]
 #QQ频道管理员ID
 guildAdmins: ['123465', '123456']
 
-# 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
+# 离线超过1天后启动后首次不要发送订阅，避免消息轰炸 (废弃)
 notSentAfterLongOffline: false
+
+# 首次检测不发送，避免消息爆炸
+firstCheckDontSend: true
 
 # 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
 runInterval: 120
