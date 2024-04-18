@@ -1,9 +1,11 @@
 ﻿using Flurl.Http;
+using Flurl.Http.Configuration;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -20,11 +22,44 @@ namespace NitterAPI.Services
         public List<string> images { get; set; }
     }
 
+    internal class NitterHttpClientFactory : IHttpClientFactory
+    {
+        public HttpClient CreateHttpClient(HttpMessageHandler handler)
+        {
+            return new HttpClient(new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = delegate { return true; } // 所有证书都被接受，不考虑错误
+            });
+        }
+
+        public HttpMessageHandler CreateMessageHandler()
+        {
+            return new HttpClientHandler
+            {
+                // #266
+                // deflate not working? see #474
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+        }
+    }
+
+
 
     internal class NitterManager
     {
 
         const string kBaseUrl = "https://nitter.net";
+
+        static NitterManager()
+        {
+            // 在GlobalSettings中应用这些自定义设置
+            FlurlHttp.Configure(settings =>
+            {
+                settings.HttpClientFactory = new NitterHttpClientFactory();
+            });
+
+        }
+
 
         /// <summary>
         /// 
@@ -34,10 +69,10 @@ namespace NitterAPI.Services
         public static JsonArray GetNitter(string name)
         {
             var htmlString = $"{kBaseUrl}/{name}"
-            .WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+            .WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
             .WithHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
             .WithHeader("Accept-Encoding", "gzip, deflate, br")
-            .WithHeader("Accept-Language", "zh-CN,zh;q=0.9,ja;q=0.8")
+            .WithHeader("Accept-Language", "en-US,zh;q=0.9,ja;q=0.8")
             .GetStringAsync().Result;
 
             var doc = new HtmlDocument();

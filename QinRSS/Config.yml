@@ -16,6 +16,9 @@ notSentAfterLongOffline: false
 # 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
 runInterval: 120
 
+# 单次发送后等待的时间（秒），避免一些特殊的QQ客户端实现无法连续发送
+sendInterval: 3
+
 # 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
 selfDownloadImage: false
 

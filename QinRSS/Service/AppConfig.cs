@@ -41,6 +41,11 @@ namespace QinRSS.Service
         /// </summary>
         public int RunInterval { get; set; } = 60;
 
+        /// <summary>
+        /// 单次发送后等待的时间（秒），建议设置一些时间，避免一些特殊的QQ客户端实现无法连续发送
+        /// </summary>
+        public int SendInterval { get; set; } = 3;
+
 
         /// <summary>
         /// 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送

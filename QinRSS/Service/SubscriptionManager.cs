@@ -196,7 +196,7 @@ namespace QinRSS.Service
 
 
                     //NitterManager
-                    if (url.Contains("twitter/user"))
+                    if (url.Contains("twitter/user_nt"))
                     {
                         string username = url.Substring(url.LastIndexOf('/') + 1); // 获取用户名
                         List<Tweet> tweets;
@@ -360,7 +360,16 @@ namespace QinRSS.Service
                                         }
 
 
-                                        Thread.Sleep(1000);
+                                        //自定义发送延时
+                                        if (AppConfig.Data.SendInterval > 0)
+                                        {
+                                            Thread.Sleep(AppConfig.Data.SendInterval * 1000); 
+                                        }
+                                        else
+                                        {
+                                            Thread.Sleep(1000);
+                                        }
+                                        
                                     }
 
                                 }
