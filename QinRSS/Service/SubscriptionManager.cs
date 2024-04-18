@@ -120,6 +120,7 @@ namespace QinRSS.Service
                     runInterval = 60;
                 }
 
+                runCount++;
                 TaskHelper.Sleep(1000 * runInterval, 100, cancellationToken);
             }
         }
