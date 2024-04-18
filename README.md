@@ -6,23 +6,29 @@ QinRSS是QQ机器人RSS订阅订阅插件，基于OneBot12协议，支持从RSSH
 下载对应系统的程序包，编辑Config.yml文件，
 
 ```yml
-# 监听的ws地址
+﻿#监听的ws地址
 webSocketLocation: 'ws://127.0.0.1:1868'
 
-# RSSHub站点地址，可自行寻找、搭建替换
+#RSSHub站点地址，可自行寻找、搭建替换
 rssHubUrl: 'https://rsshub.app'
 
-# QQ群管理员ID
+#QQ群管理员ID
 groupAdmins: [123456, 123456]
 
-# QQ频道管理员ID
+#QQ频道管理员ID
 guildAdmins: ['123465', '123456']
 
-# 离线超过1天后启动后首次不要发送订阅，避免消息轰炸
+# 离线超过1天后启动后首次不要发送订阅，避免消息轰炸 (废弃)
 notSentAfterLongOffline: false
+
+# 首次检测不发送，避免消息爆炸
+firstCheckDontSend: true
 
 # 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
 runInterval: 120
+
+# 单次发送后等待的时间（秒），避免一些特殊的QQ客户端实现无法连续发送
+sendInterval: 3
 
 # 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
 selfDownloadImage: false
@@ -35,6 +41,9 @@ openAIKey: ''
 
 # 用于无法连接OpenAI的情况
 openAIProxy: ''
+
+# 用于无法连接OpenAI的情况，架设的反代地址，有了反代就不建议设置openAIProxy了
+openAIAPIBaseUri: ''
 ```
 
 在go-cqhttp中配置反向代理地址，然后运行QinRSS.exe
