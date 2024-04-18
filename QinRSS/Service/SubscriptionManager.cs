@@ -384,12 +384,14 @@ namespace QinRSS.Service
                     }
 
 
-                   
 
-                    
+
                     //Save();
                     SaveCache();
                 }
+
+                SimpleLogger.Instance.Info($"检查{model.SelfId}订阅完毕");
+
             }
         }
 

@@ -39,6 +39,7 @@ namespace QinRSS.Service
         /// <summary>
         /// 首次检测不发送，避免消息爆炸
         /// </summary>
+        [YamlMember(Alias = "firstCheckDontSend", ApplyNamingConventions = false)]
         public bool FirstCheckDontSend { get; set; }
 
         /// <summary>
