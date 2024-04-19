@@ -429,9 +429,11 @@ namespace QinRSS.Service
 
             if (translate)
             {
+                SimpleLogger.Instance.Info($"正在翻译内容...");
                 var translates = await ChatGPTTranslatorManager.Translater(content);
                 if (!string.IsNullOrWhiteSpace(translates))
                 {
+                    SimpleLogger.Instance.Info($"翻译完成");
                     var translateContent = translates;
 
                     if (translateOnly)
@@ -447,6 +449,7 @@ namespace QinRSS.Service
                 }
                 else
                 {
+                    SimpleLogger.Instance.Info($"翻译失败，发送原文");
                     sendText = $"{title}\n{content}\n";
                 }
             }
