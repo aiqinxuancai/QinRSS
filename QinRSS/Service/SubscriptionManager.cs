@@ -472,7 +472,7 @@ namespace QinRSS.Service
 
             sendText += $"\n更新时间：{time.ToString("yyyy-MM-dd HH:mm:ss")}\n链接：{url}";
 
-            SimpleLogger.Instance.Error($"发送订阅：{selfId}, {channelId}, {sendText}");
+            SimpleLogger.Instance.Info($"发送订阅：{selfId}, {channelId}, {sendText}");
             sendText = HttpUtility.HtmlDecode(sendText);
 
             if (AppConfig.Data.SelfDownloadImage)
@@ -489,6 +489,7 @@ namespace QinRSS.Service
             else
             {
                 //频道
+                SimpleLogger.Instance.Info($"发送到QQ频道 {guildId}");
                 await WebSocketManager.Instance.SendChannelMessage(selfId, guildId, channelId, sendText);
             }
         }
