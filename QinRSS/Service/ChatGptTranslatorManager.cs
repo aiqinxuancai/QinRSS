@@ -32,10 +32,10 @@ namespace QinRSS.Service
         {
             if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
             {
-                _client = new ChatGPTClient(AppConfig.Data.OpenAIKey, timeoutSeconds: 60, proxyUri: AppConfig.Data.OpenAIProxy);
+                _client = new ChatGPTClient(AppConfig.Data.OpenAIKey, timeoutSeconds: 60, proxyUri: AppConfig.Data.OpenAIProxy, modelName: AppConfig.Data.OpenAIAPIModel);
                 if (!string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIBaseUri))
                 {
-                    _client.OpenAIAPIBaseUri = AppConfig.Data.OpenAIAPIBaseUri;
+                    _client.Settings.APIURL = AppConfig.Data.OpenAIAPIBaseUri;
                 }
                 
             }
@@ -61,7 +61,7 @@ namespace QinRSS.Service
                     }
 
 
-                    var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId, ChatGPTSharp.Model.SendSystemType.None);
+                    var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId);
 
                     _lastParentMessageId = result.ConversationId;
                     _lastConversationId = result.MessageId;

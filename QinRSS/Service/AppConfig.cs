@@ -80,8 +80,10 @@ namespace QinRSS.Service
         /// </summary>
         [YamlMember(Alias = "openAIAPIBaseUri", ApplyNamingConventions = false)]
         public string OpenAIAPIBaseUri { get; set; } = string.Empty;
-        
 
+
+        [YamlMember(Alias = "openAIAPIModel", ApplyNamingConventions = false)]
+        public string OpenAIAPIModel { get; set; } = string.Empty;
 
     }
 
