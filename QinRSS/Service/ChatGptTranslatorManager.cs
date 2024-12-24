@@ -22,6 +22,7 @@ namespace QinRSS.Service
 
         static string _lastParentMessageId = string.Empty;
 
+        
 
         const string kSystemMessage = "请把以下内容翻译为简体中文，不要解释：\n";
 
@@ -37,7 +38,9 @@ namespace QinRSS.Service
                 {
                     _client.Settings.APIURL = AppConfig.Data.OpenAIAPIBaseUri;
                 }
-                
+                _client.Settings.IsDebug = true;
+
+
             }
         }
 
