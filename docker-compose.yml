@@ -1,0 +1,13 @@
+services:
+  qinrss:
+    image: ghcr.io/aiqinxuancai/qinrss:latest
+    container_name: qinrss
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    ports:
+      - "1868:1868"
+    volumes:
+      - ./Config.yml:/app/Config.yml:ro
+    environment:
+      TZ: Asia/Shanghai

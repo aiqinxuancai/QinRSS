@@ -1,0 +1,12 @@
+.git
+.github
+.vs
+.vscode
+**/bin
+**/obj
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+**/*.ncrunch*
+**/.DS_Store
