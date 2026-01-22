@@ -1,31 +1,22 @@
 ﻿
-using ChatGPTSharp;
-using Flurl.Http;
-using Newtonsoft.Json;
+using OpenAI;
+using OpenAI.Chat;
 using QinRSS.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Nodes;
+using System.Net;
 using System.Threading.Tasks;
+using System.ClientModel;
+using System.ClientModel.Primitives;
 
 namespace QinRSS.Service
 {
     internal class ChatGPTTranslatorManager
     {
-        static ChatGPTClient _client;
+        static ChatClient _client;
 
-        static string _lastConversationId = string.Empty;
-
-        static string _lastParentMessageId = string.Empty;
-
-        
-
-        const string kSystemMessage = "请把以下内容翻译为简体中文，不要解释：\n";
-
+        const string kSystemMessage = "请把以下内容翻译为简体中文，不要解释：";
 
         static Dictionary<string, string> _cache = new Dictionary<string, string>();
 
@@ -33,15 +24,39 @@ namespace QinRSS.Service
         {
             if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
             {
-                _client = new ChatGPTClient(AppConfig.Data.OpenAIKey, timeoutSeconds: 60, proxyUri: AppConfig.Data.OpenAIProxy, modelName: AppConfig.Data.OpenAIAPIModel);
-                if (!string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIBaseUri))
-                {
-                    _client.Settings.APIURL = AppConfig.Data.OpenAIAPIBaseUri;
-                }
-                _client.Settings.IsDebug = true;
+                var model = string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIModel)
+                    ? "gpt-4o-mini"
+                    : AppConfig.Data.OpenAIAPIModel;
 
-
+                _client = new ChatClient(model, new ApiKeyCredential(AppConfig.Data.OpenAIKey), BuildClientOptions());
             }
+        }
+
+        static OpenAIClientOptions BuildClientOptions()
+        {
+            var options = new OpenAIClientOptions
+            {
+                NetworkTimeout = TimeSpan.FromSeconds(60)
+            };
+
+            if (!string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIBaseUri))
+            {
+                options.Endpoint = new Uri(AppConfig.Data.OpenAIAPIBaseUri);
+            }
+
+            if (!string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIProxy))
+            {
+                var proxy = new WebProxy(AppConfig.Data.OpenAIProxy);
+                var handler = new HttpClientHandler
+                {
+                    Proxy = proxy,
+                    UseProxy = true
+                };
+                var httpClient = new HttpClient(handler);
+                options.Transport = new HttpClientPipelineTransport(httpClient);
+            }
+
+            return options;
         }
 
         /// <summary>
@@ -56,23 +71,28 @@ namespace QinRSS.Service
             {
                 try
                 {
-                    s = $"{kSystemMessage}{s}";
+                    if (string.IsNullOrWhiteSpace(s))
+                    {
+                        return string.Empty;
+                    }
 
-                    if (_cache.TryGetValue(s, out var r))
+                    var cacheKey = $"{kSystemMessage}{s}";
+                    if (_cache.TryGetValue(cacheKey, out var r))
                     {
                         return r;
                     }
 
+                    var completion = await _client.CompleteChatAsync(
+                        new ChatMessage[]
+                        {
+                            new SystemChatMessage(kSystemMessage),
+                            new UserChatMessage(s)
+                        });
 
-                    var result = await _client.SendMessage(s, _lastConversationId, _lastParentMessageId);
+                    var text = string.Join(string.Empty, completion.Value.Content.Select(part => part.Text ?? string.Empty)).Trim();
+                    _cache[cacheKey] = text;
 
-                    _lastParentMessageId = result.ConversationId;
-                    _lastConversationId = result.MessageId;
-
-
-                    _cache[s] = string.IsNullOrEmpty(result.Response) ? "" : result.Response;
-
-                    return result.Response;
+                    return text;
 
                 }
                 catch (Exception ex)

@@ -11,31 +11,55 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
-    name: Dotnet Build
-    
+    runs-on: ${{ matrix.os }}
+    name: Dotnet Publish (AOT)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: windows-latest
+            rid: win-x86
+          - os: macos-latest
+            rid: osx-x64
+          - os: macos-latest
+            rid: osx-arm64
+          - os: ubuntu-latest
+            rid: linux-arm64
+          - os: ubuntu-latest
+            rid: linux-x64
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.*'
-      - run: dotnet publish -c Release --runtime win-x64 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\win-x64\publish\ -DestinationPath .\QinRSS-win-x64.zip
-      - run: dotnet publish -c Release --runtime win-x86 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\win-x86\publish\ -DestinationPath .\QinRSS-win-x86.zip
-      - run: dotnet publish -c Release --runtime osx-x64 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\osx-x64\publish\ -DestinationPath .\QinRSS-osx-x64.zip
-      - run: dotnet publish -c Release --runtime osx-arm64 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\osx-arm64\publish\ -DestinationPath .\QinRSS-osx-arm64.zip
-      - run: dotnet publish -c Release --runtime linux-arm64 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\linux-arm64\publish\ -DestinationPath .\QinRSS-linux-arm64.zip
-      - run: dotnet publish -c Release --runtime linux-x64 --p:PublishSingleFile=true
-      - run: powershell Compress-Archive -Path $env:GITHUB_WORKSPACE\QinRSS\bin\Release\net9.0\linux-x64\publish\ -DestinationPath .\QinRSS-linux-x64.zip
+          dotnet-version: '10.0.*'
+      - name: Publish AOT
+        run: dotnet publish -c Release --runtime ${{ matrix.rid }} --self-contained true -p:PublishAot=true
+      - name: Zip publish output
+        run: pwsh -Command "Compress-Archive -Path \"${env:GITHUB_WORKSPACE}/QinRSS/bin/Release/net10.0/${{ matrix.rid }}/publish/*\" -DestinationPath \"${env:GITHUB_WORKSPACE}/QinRSS-${{ matrix.rid }}.zip\""
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: QinRSS-${{ matrix.rid }}
+          path: QinRSS-${{ matrix.rid }}.zip
+
+  release:
+    runs-on: ubuntu-latest
+    name: Create Release
+    needs: build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
       - name: Create a Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "QinRSS-win-x64.zip,QinRSS-win-x86.zip,QinRSS-osx-x64.zip,QinRSS-osx-arm64.zip,QinRSS-linux-arm64.zip,QinRSS-linux-x64.zip"
+          artifacts: "artifacts/*.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   docker:

@@ -2,17 +2,20 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 
 namespace QinRSS.Service
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
     public class AppConfigData
     {
         /// <summary>
         /// ws监听地址 如"ws://127.0.0.1:1089"
         /// </summary>
+        [YamlMember(Alias = "webSocketLocation", ApplyNamingConventions = false)]
         public string WebSocketLocation { get; set; } = string.Empty;
 
         /// <summary>
@@ -24,16 +27,19 @@ namespace QinRSS.Service
         /// <summary>
         /// QQ群管理ID
         /// </summary>
+        [YamlMember(Alias = "groupAdmins", ApplyNamingConventions = false)]
         public long[] GroupAdmins { get; set; } = new long[0];
 
         /// <summary>
         /// QQ频道管理员ID
         /// </summary>
+        [YamlMember(Alias = "guildAdmins", ApplyNamingConventions = false)]
         public string[] GuildAdmins { get; set; } = new string[0];
 
         /// <summary>
         /// 离线大于1天后再上线，首次不发送订阅，避免出现消息轰炸(废弃)
         /// </summary>
+        [YamlMember(Alias = "notSentAfterLongOffline", ApplyNamingConventions = false)]
         public bool NotSentAfterLongOffline { get; set; }
 
         /// <summary>
@@ -45,22 +51,26 @@ namespace QinRSS.Service
         /// <summary>
         /// 检查订阅的时间间隔（秒），建议大于60秒，具体更新速度可能取决于RSSHub站点的设置
         /// </summary>
+        [YamlMember(Alias = "runInterval", ApplyNamingConventions = false)]
         public int RunInterval { get; set; } = 60;
 
         /// <summary>
         /// 单次发送后等待的时间（秒），建议设置一些时间，避免一些特殊的QQ客户端实现无法连续发送
         /// </summary>
+        [YamlMember(Alias = "sendInterval", ApplyNamingConventions = false)]
         public int SendInterval { get; set; } = 3;
 
 
         /// <summary>
         /// 在插件中将图片下载后再进行发送，而非直接传递URL，避免部分情况go-cqhttp自身问题导致的图片无法正常发送
         /// </summary>
+        [YamlMember(Alias = "selfDownloadImage", ApplyNamingConventions = false)]
         public bool SelfDownloadImage { get; set; }
 
         /// <summary>
         /// 图片代理，设置后使用代理下载图片发送，如 http://127.0.0.1:1080，仅在SelfDownloadImage设置为true时可用
         /// </summary>
+        [YamlMember(Alias = "imageProxy", ApplyNamingConventions = false)]
         public string ImageProxy { get; set; } = string.Empty;
 
         /// <summary>
@@ -112,6 +122,7 @@ namespace QinRSS.Service
         }
 
 
+        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(AppConfigData))]
         public static bool Init()
         {
             try

@@ -1,0 +1,5 @@
+<linker>
+  <assembly fullname="QinRSS">
+    <type fullname="QinRSS.Service.AppConfigData" preserve="all" />
+  </assembly>
+</linker>
