@@ -4,7 +4,7 @@ COPY QinRSS/QinRSS.csproj QinRSS/
 RUN dotnet restore QinRSS/QinRSS.csproj
 COPY . .
 WORKDIR /src/QinRSS
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish -p:PublishAot=false
 
 FROM mcr.microsoft.com/dotnet/runtime:10.0
 WORKDIR /app
