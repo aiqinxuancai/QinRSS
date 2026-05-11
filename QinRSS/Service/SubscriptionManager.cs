@@ -541,7 +541,7 @@ namespace QinRSS.Service
             {
 
                 //还原列表
-                string fileNameCache = Path.Combine(AppContext.BaseDirectory, "SubscriptionCache.json");
+                string fileNameCache = Path.Combine(AppConfig.DataDir, "SubscriptionCache.json");
                 bool loadCacheError = false;
                
                 if (File.Exists(fileNameCache))
@@ -572,7 +572,7 @@ namespace QinRSS.Service
 
                 if (loadCacheError)
                 {
-                    string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
+                    string fileName = Path.Combine(AppConfig.DataDir, "Subscription.json");
                     SimpleLogger.Instance.Info($"准备载入{fileName}");
                     if (File.Exists(fileName))
                     {
@@ -598,7 +598,7 @@ namespace QinRSS.Service
             lock (_lock)
             {
                 Debug.WriteLine("保存订阅");
-                string fileName = Path.Combine(AppContext.BaseDirectory, "Subscription.json");
+                string fileName = Path.Combine(AppConfig.DataDir, "Subscription.json");
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.ContractResolver = new SubscriptionJsonContractResolver { includeClearTask = false };
                 string content = JsonConvert.SerializeObject(_subscriptionModel, settings);
@@ -616,7 +616,7 @@ namespace QinRSS.Service
             lock (_lock)
             {
                 Debug.WriteLine("保存订阅SaveSubList");
-                string fileName = Path.Combine(AppContext.BaseDirectory, "SubscriptionCache.json");
+                string fileName = Path.Combine(AppConfig.DataDir, "SubscriptionCache.json");
 
                 JsonSerializerSettings settings = new JsonSerializerSettings();
                 settings.ContractResolver = new SubscriptionJsonContractResolver { includeClearTask = true };

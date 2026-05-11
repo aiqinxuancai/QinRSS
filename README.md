@@ -22,17 +22,24 @@ QinRSS 是 QQ 机器人 RSS 订阅插件，基于 OneBot 12 协议，支持从 R
 注意：频道主和QQ群主默认拥有操作订阅的权限。
 
 ### 方式二：Docker
-1. 复制配置模板并修改：
-   - `QinRSS/Config.yml` 是默认模板，可复制到仓库根目录后修改为 `Config.yml`。
+1. 在宿主机新建数据目录（如 `./data`），将 `Config.yml` 放入其中。
 2. 将 `webSocketLocation` 设置为 `ws://0.0.0.0:1868`，并确保容器端口映射到主机。
-3. 运行容器：
+3. 运行容器，通过 `DATA_DIR` 环境变量指定数据目录：
 
 ```bash
+mkdir -p ./data
+cp QinRSS/Config.yml ./data/Config.yml
+# 编辑 ./data/Config.yml ...
+
 docker run -d --name qinrss \
   -p 1868:1868 \
-  -v "$(pwd)/Config.yml:/app/Config.yml:ro" \
+  -v "$(pwd)/data:/data" \
+  -e DATA_DIR=/data \
+  -e TZ=Asia/Shanghai \
   ghcr.io/<owner>/<repo>:latest
 ```
+
+> `DATA_DIR` 指定后，程序会将 `Config.yml`、`Subscription.json`、`Cache.json`、日志等所有数据文件统一读写到该目录，方便挂载 Volume 持久化。未设置时默认使用程序所在目录。
 
 #### Docker Compose 示例
 仓库根目录已提供 `docker-compose.yml` 示例，替换其中的镜像地址即可：
@@ -41,7 +48,14 @@ docker run -d --name qinrss \
 docker compose up -d
 ```
 
-> 提示：Compose 已开启 `tty` 和 `stdin_open`，用于避免程序因标准输入关闭而退出。
+> 默认挂载 `./data` 到容器内 `/data` 并设置 `DATA_DIR=/data`，启动前请确保 `./data/Config.yml` 已准备好。
+
+## 环境变量
+
+| 变量名 | 说明 | 默认值 |
+|--------|------|--------|
+| `DATA_DIR` | 数据目录，程序将在此目录读写 `Config.yml`、`Subscription.json`、`Cache.json` 及日志文件。Docker 部署时推荐挂载 Volume 并设置此变量。 | 程序所在目录 |
+| `TZ` | 时区 | 系统时区 |
 
 ## 配置说明（Config.yml）
 

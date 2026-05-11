@@ -1,4 +1,7 @@
-﻿#监听的ws地址
+﻿# 注意：Config.yml 及所有数据文件（订阅、缓存、日志）默认存储在程序所在目录。
+# Docker 部署时建议通过环境变量 DATA_DIR 指定挂载目录，例如 DATA_DIR=/data。
+
+#监听的ws地址
 webSocketLocation: 'ws://127.0.0.1:1868'
 
 #RSSHub站点地址，可自行寻找、搭建替换

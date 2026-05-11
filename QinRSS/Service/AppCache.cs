@@ -35,7 +35,7 @@ namespace QinRSS.Service
     {
         public static AppCacheData Data { set; get; } = new AppCacheData();
 
-        private static string _configPath = Path.Combine(AppContext.BaseDirectory, "Cache.json");
+        private static string _configPath = Path.Combine(AppConfig.DataDir, "Cache.json");
 
         private static object _lock = new object();
 

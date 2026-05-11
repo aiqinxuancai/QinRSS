@@ -30,7 +30,7 @@ namespace QinRSS.Service
         {
             datetimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
-            logFilename = Path.Combine(AppContext.BaseDirectory, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + FILE_EXT);
+            logFilename = Path.Combine(AppConfig.DataDir, System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + FILE_EXT);
 
             // Log file header line
             string logHeader = logFilename + " is created.";

@@ -44,6 +44,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
 #endif
 
             Console.WriteLine("当前配置信息：");
+            Console.WriteLine($"数据目录：{AppConfig.DataDir}");
             Console.WriteLine(JsonConvert.SerializeObject(AppConfig.Data, Formatting.Indented));
 
             //基础检查

@@ -105,15 +105,24 @@ namespace QinRSS.Service
         
         public static AppConfigData Data { set; get; } = new AppConfigData();
 
+        /// <summary>
+        /// 数据目录，优先使用 DATA_DIR 环境变量，未设置时回退到程序所在目录。
+        /// Docker 部署时可通过 -e DATA_DIR=/data 指定挂载目录。
+        /// </summary>
+        public static string DataDir { get; } =
+            Environment.GetEnvironmentVariable("DATA_DIR") is { Length: > 0 } dir
+                ? dir
+                : AppContext.BaseDirectory;
 
         public static string ConfigPath => _configPath;
 
-        private static string _configPath = Path.Combine(AppContext.BaseDirectory, "Config.yml");
+        private static string _configPath = Path.Combine(DataDir, "Config.yml");
 
         private static object _lock = new object();
 
         static AppConfig()
         {
+            Directory.CreateDirectory(DataDir);
             Init();
         }
 
