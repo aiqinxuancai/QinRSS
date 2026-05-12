@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QinRSS", "QinRSS\QinRSS.csproj", "{FBBA8560-05E9-4FCF-BBB9-4A71B2B90D5E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QinRSS.Tests", "QinRSS.Tests\QinRSS.Tests.csproj", "{0D893C9A-8E35-4FC8-BDC6-FD99260A3713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FBBA8560-05E9-4FCF-BBB9-4A71B2B90D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBBA8560-05E9-4FCF-BBB9-4A71B2B90D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBBA8560-05E9-4FCF-BBB9-4A71B2B90D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D893C9A-8E35-4FC8-BDC6-FD99260A3713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D893C9A-8E35-4FC8-BDC6-FD99260A3713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D893C9A-8E35-4FC8-BDC6-FD99260A3713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D893C9A-8E35-4FC8-BDC6-FD99260A3713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

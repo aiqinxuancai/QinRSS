@@ -25,7 +25,7 @@ namespace QinRSS.Service
             if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
             {
                 var model = string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIModel)
-                    ? "gpt-4o-mini"
+                    ? "gpt-5.4-mini"
                     : AppConfig.Data.OpenAIAPIModel;
 
                 _client = new ChatClient(model, new ApiKeyCredential(AppConfig.Data.OpenAIKey), BuildClientOptions());

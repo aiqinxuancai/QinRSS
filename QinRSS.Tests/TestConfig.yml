@@ -1,0 +1,14 @@
+# QinRSS 测试配置文件 — 字段与主项目 Config.yml 保持一致
+# 填写所需字段后执行 dotnet test 即可运行集成测试
+
+# RSS 抓取集成测试地址（完整 URL）
+rssHubUrl: 'https://news.ycombinator.com/rss'
+
+# OpenAI-Key，留空则跳过所有翻译相关测试
+openAIKey: ''
+
+# 翻译接口反代地址，留空使用 OpenAI 官方地址
+openAIAPIBaseUri: ''
+
+# 翻译使用的模型
+openAIAPIModel: 'gpt-4o-mini'
