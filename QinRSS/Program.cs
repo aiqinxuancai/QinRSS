@@ -58,9 +58,13 @@ namespace MyApp // Note: actual namespace depends on the project name.
             //启动ws服务
             await WebSocketManager.Instance.StartServiceT();
 
+            //启动Web管理服务
+            var adminServer = new AdminServer();
+            adminServer.Start();
+
             //启动订阅推送服务
             SubscriptionManager.Instance.Restart();
-            Console.ReadLine();
+            await Task.Delay(Timeout.Infinite);
 
         }
 

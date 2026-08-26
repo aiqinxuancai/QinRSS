@@ -13,6 +13,8 @@ namespace QinRSS.Service
         private readonly string datetimeFormat;
         private readonly string logFilename;
 
+        public string LogFilename => logFilename;
+
 
         // 使用 Lazy<T> 类型实现延迟初始化
         private static readonly Lazy<SimpleLogger> lazy =
@@ -79,6 +81,23 @@ namespace QinRSS.Service
         public void Info(string text, params object[] args)
         {
             WriteFormattedLog(LogLevel.INFO, string.Format(text, args));
+        }
+
+        public string ReadRecent(int maxLines = 300)
+        {
+            try
+            {
+                lock (fileLock)
+                {
+                    if (!File.Exists(logFilename)) return string.Empty;
+                    var lines = File.ReadAllLines(logFilename, Encoding.UTF8);
+                    return string.Join(Environment.NewLine, lines.TakeLast(Math.Clamp(maxLines, 1, 2000)));
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"读取日志失败：{ex.Message}";
+            }
         }
 
         /// <summary>

@@ -95,6 +95,15 @@ namespace QinRSS.Service
         [YamlMember(Alias = "openAIAPIModel", ApplyNamingConventions = false)]
         public string OpenAIAPIModel { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 管理界面监听地址与端口。管理界面默认监听所有网卡的 8080 端口。
+        /// </summary>
+        [YamlMember(Alias = "adminHost", ApplyNamingConventions = false)]
+        public string AdminHost { get; set; } = "0.0.0.0";
+
+        [YamlMember(Alias = "adminPort", ApplyNamingConventions = false)]
+        public int AdminPort { get; set; } = 8080;
+
     }
 
     /// <summary>
@@ -181,6 +190,34 @@ namespace QinRSS.Service
             catch (System.Exception ex)
             {
                 SimpleLogger.Instance.Info($"配置存储失败：{ex}");
+            }
+        }
+
+        /// <summary>
+        /// 原子替换配置并持久化。调用方负责在应用后刷新依赖配置的服务。
+        /// </summary>
+        public static void Apply(AppConfigData data)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+
+            data.RunInterval = Math.Clamp(data.RunInterval, 10, 86400);
+            data.SendInterval = Math.Clamp(data.SendInterval, 0, 3600);
+            data.AdminPort = Math.Clamp(data.AdminPort, 1, 65535);
+            data.AdminHost = string.IsNullOrWhiteSpace(data.AdminHost) ? "0.0.0.0" : data.AdminHost.Trim();
+            data.RSSHubUrl ??= string.Empty;
+            data.WebSocketLocation ??= string.Empty;
+            data.ImageProxy ??= string.Empty;
+            data.OpenAIKey ??= string.Empty;
+            data.OpenAIProxy ??= string.Empty;
+            data.OpenAIAPIBaseUri ??= string.Empty;
+            data.OpenAIAPIModel ??= string.Empty;
+            data.GroupAdmins ??= Array.Empty<long>();
+            data.GuildAdmins ??= Array.Empty<string>();
+
+            lock (_lock)
+            {
+                Data = data;
+                Save();
             }
         }
 

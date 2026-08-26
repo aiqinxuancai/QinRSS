@@ -22,7 +22,7 @@ namespace NitterAPI.Services
         public List<string> images { get; set; }
     }
 
-    internal class NitterHttpClientFactory : IHttpClientFactory
+    internal class NitterHttpClientFactory : Flurl.Http.Configuration.IHttpClientFactory
     {
         public HttpClient CreateHttpClient(HttpMessageHandler handler)
         {

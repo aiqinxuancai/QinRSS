@@ -6,6 +6,7 @@ QinRSS 是 QQ 机器人 RSS 订阅插件，基于 OneBot 12 协议，支持从 R
 - 支持 RSSHub 订阅
 - 支持 QQ 群与 QQ 频道
 - 支持 ChatGPT 翻译推送
+- 内置 Web 管理界面，可管理订阅、发送消息、查看日志并实时修改配置
 
 ## 快速开始
 
@@ -33,6 +34,7 @@ cp QinRSS/Config.yml ./data/Config.yml
 
 docker run -d --name qinrss \
   -p 1868:1868 \
+  -p 8080:8080 \
   -v "$(pwd)/data:/data" \
   -e DATA_DIR=/data \
   -e TZ=Asia/Shanghai \
@@ -50,12 +52,18 @@ docker compose up -d
 
 > 默认挂载 `./data` 到容器内 `/data` 并设置 `DATA_DIR=/data`，启动前请确保 `./data/Config.yml` 已准备好。
 
+管理界面默认地址为 `http://127.0.0.1:8080/`，Docker 部署需要同时映射 `8080` 端口。可在 `Config.yml` 中通过 `adminHost` 与 `adminPort` 修改监听地址和端口。
+
 ## 环境变量
 
 | 变量名 | 说明 | 默认值 |
 |--------|------|--------|
 | `DATA_DIR` | 数据目录，程序将在此目录读写 `Config.yml`、`Subscription.json`、`Cache.json` 及日志文件。Docker 部署时推荐挂载 Volume 并设置此变量。 | 程序所在目录 |
 | `TZ` | 时区 | 系统时区 |
+
+## Web 管理界面
+
+启动后访问 `http://127.0.0.1:8080/`。界面提供运行概览、群组/频道订阅的添加与删除、手动发送消息、日志查看和完整配置编辑。配置保存后会立即重启订阅调度并刷新翻译客户端，无需重启程序。
 
 ## 配置说明（Config.yml）
 
@@ -101,6 +109,10 @@ openAIAPIBaseUri: ''
 
 # OpenAI API 模型（可选）
 openAIAPIModel: ''
+
+# Web 管理界面监听地址与端口
+adminHost: '0.0.0.0'
+adminPort: 8080
 ```
 
 ## 使用方法

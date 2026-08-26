@@ -654,7 +654,7 @@ namespace QinRSS.Service
                 _subscriptionModel.Add(oneBotRSSModel);
             }
 
-            if (list.ToList().Find( a => { return a.Url == url && a.GroupOrChannelId == guildId && a.GuildId == guildId; }) != null)
+            if (list.Any(a => a.Url == url && a.GroupOrChannelId == channelId && a.GuildId == guildId))
             {
                 //找到了存在相同
                 SimpleLogger.Instance.Error($"添加失败，重复的订阅");
@@ -668,6 +668,7 @@ namespace QinRSS.Service
             model.GuildId = guildId;
             model.Translate = translate;
             model.TranslateOnly = translateOnly;
+            model.SubscriptionType = string.IsNullOrWhiteSpace(guildId) ? SubscriptionType.Normal : SubscriptionType.Channel;
 
             SimpleLogger.Instance.Error($"添加订阅：{model.Url}");
 

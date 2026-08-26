@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>QinRSS 管理中心</title><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">Q</span><span>QinRSS</span></div>
+    <div class="eyebrow">管理中心</div>
+    <nav>
+      <button class="nav-item active" data-view="overview"><span>⌂</span>概览</button>
+      <button class="nav-item" data-view="subscriptions"><span>◉</span>订阅管理</button>
+      <button class="nav-item" data-view="send"><span>↗</span>发送消息</button>
+      <button class="nav-item" data-view="logs"><span>≡</span>运行日志</button>
+      <button class="nav-item" data-view="config"><span>⚙</span>系统配置</button>
+    </nav>
+    <div class="sidebar-foot"><span class="status-dot"></span><span id="side-status">正在连接</span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="kicker">QinRSS / CONTROL</div><h1 id="page-title">运行概览</h1></div><button class="icon-button" id="refresh" title="刷新数据">↻</button></header>
+    <div id="toast" class="toast"></div>
+    <section class="view active" id="view-overview">
+      <div class="hero"><div><span class="pill green">系统在线</span><h2>把订阅流转交给 QinRSS</h2><p>集中查看连接状态、发送记录与订阅任务。</p></div><div class="hero-meta"><span>最后发送</span><strong id="last-sent">暂无记录</strong></div></div>
+      <div class="stat-grid"><div class="stat"><span>在线 Bot</span><strong id="stat-bots">0</strong><small>当前 WebSocket 连接</small></div><div class="stat"><span>活跃订阅</span><strong id="stat-subs">0</strong><small>全部群组与频道</small></div><div class="stat"><span>运行间隔</span><strong id="stat-interval">-</strong><small>秒 / 自动检查</small></div><div class="stat"><span>数据目录</span><strong class="stat-path" id="stat-dir">-</strong><small>持久化位置</small></div></div>
+      <div class="section-head"><div><div class="kicker">QUICK ACCESS</div><h3>常用操作</h3></div></div>
+      <div class="quick-grid"><button class="quick" data-go="subscriptions"><span class="quick-icon">＋</span><span><b>添加订阅</b><small>为群组或频道添加 RSS 源</small></span><i>→</i></button><button class="quick" data-go="send"><span class="quick-icon">↗</span><span><b>发送消息</b><small>向已连接的 Bot 投递消息</small></span><i>→</i></button><button class="quick" data-go="logs"><span class="quick-icon">≡</span><span><b>查看日志</b><small>追踪运行与发送记录</small></span><i>→</i></button></div>
+    </section>
+    <section class="view" id="view-subscriptions"><div class="section-head"><div><div class="kicker">RSS SOURCES</div><h2>订阅管理</h2><p class="muted">添加、删除并立即刷新群组和频道订阅。</p></div><button class="primary" id="refresh-subs">↻ 刷新任务</button></div>
+      <div class="panel form-panel"><div class="panel-title">添加新订阅</div><form id="subscription-form" class="form-grid"><label>Bot Self ID<input name="selfId" required placeholder="例如 123456"></label><label>目标类型<select name="targetType"><option value="group">QQ群</option><option value="channel">频道</option></select></label><label>群号 / 频道号<input name="targetId" required placeholder="目标 ID"></label><label>频道 Guild ID<input name="guildId" placeholder="频道订阅时填写"></label><label class="wide">订阅名称<input name="name" required placeholder="例如 官方动态"></label><label class="wide">RSSHub 路径或完整 URL<input name="url" required placeholder="twitter/user/example 或 https://..."></label><label class="check"><input type="checkbox" name="translate"> 翻译为简体中文</label><label class="check"><input type="checkbox" name="translateOnly"> 仅发送翻译结果</label><div class="wide actions"><button class="primary" type="submit">添加订阅</button></div></form></div>
+      <div class="panel"><div class="panel-title row"><span>全部订阅</span><span class="count" id="sub-count">0 条</span></div><div class="table-wrap"><table><thead><tr><th>名称</th><th>Bot</th><th>目标</th><th>来源</th><th>选项</th><th></th></tr></thead><tbody id="subscription-rows"><tr><td colspan="6" class="empty">正在加载…</td></tr></tbody></table></div></div>
+    </section>
+    <section class="view" id="view-send"><div class="section-head"><div><div class="kicker">ONEBOT ACTION</div><h2>发送消息</h2><p class="muted">通过已连接的 OneBot 连接直接发送文本消息。</p></div></div><div class="panel form-panel"><form id="send-form" class="form-grid"><label>Bot Self ID<select name="selfId" id="send-self"></select></label><label>目标类型<select name="targetType"><option value="group">QQ群</option><option value="channel">频道</option></select></label><label>群号 / 频道号<input name="targetId" required></label><label>Guild ID（频道）<input name="guildId"></label><label class="wide">消息内容<textarea name="message" rows="8" required placeholder="输入要发送的消息…"></textarea></label><div class="wide actions"><button class="primary" type="submit">↗ 发送消息</button></div></form></div></section>
+    <section class="view" id="view-logs"><div class="section-head"><div><div class="kicker">SYSTEM OUTPUT</div><h2>运行日志</h2><p class="muted">实时查看最近的服务与发送记录。</p></div><button class="secondary" id="refresh-logs">↻ 刷新</button></div><div class="log-toolbar"><span id="log-file">-</span><select id="log-lines"><option value="100">最近 100 行</option><option value="300" selected>最近 300 行</option><option value="800">最近 800 行</option></select></div><pre class="log" id="log-content">正在加载…</pre></section>
+    <section class="view" id="view-config"><div class="section-head"><div><div class="kicker">LIVE SETTINGS</div><h2>系统配置</h2><p class="muted">保存后立即应用到订阅调度与翻译服务。</p></div></div><form id="config-form" class="panel form-grid config-grid"><label class="wide">WebSocket 地址<input name="webSocketLocation" required></label><label>RSSHub 地址<input name="rssHubUrl"></label><label>管理端口<input type="number" name="adminPort" min="1" max="65535"></label><label>管理监听地址<input name="adminHost"></label><label>检查间隔（秒）<input type="number" name="runInterval" min="10"></label><label>发送间隔（秒）<input type="number" name="sendInterval" min="0"></label><label class="wide">QQ群管理员 ID（逗号分隔）<input name="groupAdmins"></label><label class="wide">频道管理员 ID（逗号分隔）<input name="guildAdmins"></label><label class="check"><input type="checkbox" name="notSentAfterLongOffline"> 长时间离线后首次不发送</label><label class="check"><input type="checkbox" name="firstCheckDontSend"> 首次检查不发送</label><label class="check"><input type="checkbox" name="selfDownloadImage"> 下载图片后再发送</label><label>图片代理<input name="imageProxy"></label><div class="divider wide">翻译服务</div><label class="wide">OpenAI API Key<input type="password" name="openAIKey"></label><label>API Base URI<input name="openAIAPIBaseUri"></label><label>模型<input name="openAIAPIModel"></label><label>OpenAI 代理<input name="openAIProxy"></label><div class="wide actions"><button class="primary" type="submit">保存并立即生效</button></div></form></section>
+  </main>
+  <script src="/app.js"></script>
+</body></html>

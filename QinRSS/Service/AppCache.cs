@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace QinRSS.Service
 {
@@ -33,6 +34,10 @@ namespace QinRSS.Service
     /// </summary>
     public class AppCache
     {
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+        };
         public static AppCacheData Data { set; get; } = new AppCacheData();
 
         private static string _configPath = Path.Combine(AppConfig.DataDir, "Cache.json");
@@ -58,7 +63,7 @@ namespace QinRSS.Service
                     Save();
                     return false;
                 }
-                Data = JsonSerializer.Deserialize<AppCacheData>(File.ReadAllText(_configPath));
+                Data = JsonSerializer.Deserialize<AppCacheData>(File.ReadAllText(_configPath), JsonOptions) ?? new AppCacheData();
                 return true;
             }
             catch (System.Exception ex)
@@ -75,7 +80,7 @@ namespace QinRSS.Service
             {
                 lock(_lock)
                 {
-                    File.WriteAllText(_configPath, JsonSerializer.Serialize(Data));
+                    File.WriteAllText(_configPath, JsonSerializer.Serialize(Data, JsonOptions));
                     Console.WriteLine($"Cache已经存储");
                 }
                 

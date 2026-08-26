@@ -14,7 +14,8 @@ namespace QinRSS.Service
 {
     internal class ChatGPTTranslatorManager
     {
-        static ChatClient _client;
+        static ChatClient? _client;
+        static readonly object _clientLock = new object();
 
         const string kSystemMessage = "请把以下内容翻译为简体中文，不要解释：";
 
@@ -22,13 +23,22 @@ namespace QinRSS.Service
 
         static ChatGPTTranslatorManager()
         {
-            if (!string.IsNullOrEmpty(AppConfig.Data.OpenAIKey))
-            {
-                var model = string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIModel)
-                    ? "gpt-5.4-mini"
-                    : AppConfig.Data.OpenAIAPIModel;
+            Reload();
+        }
 
-                _client = new ChatClient(model, new ApiKeyCredential(AppConfig.Data.OpenAIKey), BuildClientOptions());
+        public static void Reload()
+        {
+            lock (_clientLock)
+            {
+                _client = null;
+                if (!string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIKey))
+                {
+                    var model = string.IsNullOrWhiteSpace(AppConfig.Data.OpenAIAPIModel)
+                        ? "gpt-5.4-mini"
+                        : AppConfig.Data.OpenAIAPIModel;
+                    _client = new ChatClient(model, new ApiKeyCredential(AppConfig.Data.OpenAIKey), BuildClientOptions());
+                }
+                _cache.Clear();
             }
         }
 
@@ -67,7 +77,9 @@ namespace QinRSS.Service
         public static async Task<string> Translater(string s)
         {
 
-            if (_client != null)
+            ChatClient client;
+            lock (_clientLock) client = _client;
+            if (client != null)
             {
                 try
                 {
@@ -82,7 +94,7 @@ namespace QinRSS.Service
                         return r;
                     }
 
-                    var completion = await _client.CompleteChatAsync(
+                    var completion = await client.CompleteChatAsync(
                         new ChatMessage[]
                         {
                             new SystemChatMessage(kSystemMessage),

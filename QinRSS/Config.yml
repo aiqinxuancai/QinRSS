@@ -42,3 +42,7 @@ openAIAPIBaseUri: ''
 
 # 翻译使用的模型
 openAIAPIModel: 'gpt-4o-mini'
+
+# 管理界面监听地址与端口
+adminHost: '0.0.0.0'
+adminPort: 8080

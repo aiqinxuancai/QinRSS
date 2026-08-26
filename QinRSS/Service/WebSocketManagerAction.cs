@@ -46,7 +46,7 @@ namespace QinRSS.Service
 
                 if (webSocketConnection.IsAvailable)
                 {
-                    SendGroupMessage(webSocketConnection, groupId, text);
+                    await SendGroupMessage(webSocketConnection, groupId, text);
                 }
             }
         }

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Fleck" Version="1.2.0" />
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
@@ -26,6 +27,9 @@
 
   <ItemGroup>
     <None Update="Config.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="AdminWeb\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

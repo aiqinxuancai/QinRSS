@@ -15,6 +15,7 @@ namespace QinRSS.Service
         private WebSocketServer _server;
 
         private Dictionary<string, IWebSocketConnection> _connections = new Dictionary<string, IWebSocketConnection>();
+        private readonly object _connectionLock = new object();
 
         //最大存储100条包含echo的消息，让本地来获取
         private Dictionary<string, string> _messageEcho = new Dictionary<string, string>();
@@ -28,6 +29,24 @@ namespace QinRSS.Service
             {
                 return instance;
             }
+        }
+
+        public IReadOnlyCollection<string> ConnectedSelfIds
+        {
+            get
+            {
+                lock (_connectionLock)
+                {
+                    return _connections.Where(pair => pair.Value.IsAvailable).Select(pair => pair.Key).ToArray();
+                }
+            }
+        }
+
+        public async Task Restart()
+        {
+            try { _server?.Dispose(); } catch { }
+            lock (_connectionLock) _connections.Clear();
+            await StartServiceT();
         }
 
         public async Task StartServiceT()
@@ -153,7 +172,7 @@ namespace QinRSS.Service
                     case "connect":
                         {
                             var selfId = ((ulong)node["self_id"]);
-                            _connections[selfId.ToString()] = webSocketConnection;
+                            lock (_connectionLock) _connections[selfId.ToString()] = webSocketConnection;
                             Console.WriteLine($"{selfId}已连接");
                             break;
                         }
